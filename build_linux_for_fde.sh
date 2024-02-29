@@ -4,6 +4,7 @@ set -e
 
 function isUpdated() {
 	LOCAL=$(git log $1 -n 1 --pretty=format:"%H")
+	git fetch
 	REMOTE=$(git log remotes/origin/$1 -n 1 --pretty=format:"%H")
 
 	if [ $LOCAL = $REMOTE ]; then
