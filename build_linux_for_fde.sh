@@ -41,30 +41,30 @@ if [ $recompile -eq 1 ];then
 fi
 
 #weston
-echo -e "\n\n\n ******************Installing weston*************************"
-if [  ! -e weston ];then
-	sudo apt install libpixman-1-dev libinput-dev libdrm-dev wayland-protocols libcairo2-dev libpango1.0-dev libjpeg-dev libwebp-dev libsystemd-dev libpam0g-dev libgbm-dev libva-dev freerdp2-dev libx11-xcb-dev libxcb-xkb-dev libxcb-composite0-dev liblcms2-dev libcolord-dev libgstreamer-plugins-base1.0-dev libpipewire-0.2-dev libxml2-dev libxkbcommon-dev libdbus-1-dev libxcursor-dev meson cmake -y
-	git clone https://gitee.com/openfde/weston
-	recompile=1
-else
-	cd weston
-	result=`isUpdated fde_8.0.0` 
-	echo -e "************************ weston is $result ************************"
-	if [ "$result" == "Need updated" ];then
-		recompile=1
-		git pull 
-	fi
-	cd - 1>/dev/null 
-fi
-if [ $recompile -eq 1 ];then
-	recompile=0
-	cd weston
-	mkdir -p build
-	meson build
-	meson configure build --prefix=/usr
-	sudo ninja -C build install
-	cd - 1>/dev/null 
-fi
+#echo -e "\n\n\n ******************Installing weston*************************"
+#if [  ! -e weston ];then
+#	sudo apt install libpixman-1-dev libinput-dev libdrm-dev wayland-protocols libcairo2-dev libpango1.0-dev libjpeg-dev libwebp-dev libsystemd-dev libpam0g-dev libgbm-dev libva-dev freerdp2-dev libx11-xcb-dev libxcb-xkb-dev libxcb-composite0-dev liblcms2-dev libcolord-dev libgstreamer-plugins-base1.0-dev libpipewire-0.2-dev libxml2-dev libxkbcommon-dev libdbus-1-dev libxcursor-dev meson cmake -y
+#	git clone https://gitee.com/openfde/weston
+#	recompile=1
+#else
+#	cd weston
+#	result=`isUpdated fde_8.0.0` 
+#	echo -e "************************ weston is $result ************************"
+#	if [ "$result" == "Need updated" ];then
+#		recompile=1
+#		git pull 
+#	fi
+#	cd - 1>/dev/null 
+#fi
+#if [ $recompile -eq 1 ];then
+#	recompile=0
+#	cd weston
+#	mkdir -p build
+#	meson build
+#	meson configure build --prefix=/usr
+#	sudo ninja -C build install
+#	cd - 1>/dev/null 
+#fi
 
 #gibinder-python
 
