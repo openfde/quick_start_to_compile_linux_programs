@@ -7,7 +7,7 @@ function isUpdated() {
 	git fetch
 	REMOTE=$(git log remotes/origin/$1 -n 1 --pretty=format:"%H")
 
-	if [ $LOCAL = $REMOTE ]; then
+	if [ "$LOCAL" = "$REMOTE" ]; then
 	    	echo "Up-to-date"
 	else
 	    	echo "Need updated"
@@ -19,7 +19,7 @@ echo -e "************************ Installing libglibuitl ***********************
 recompile=0
 if [  ! -e libglibutil ];then
 	sudo apt install git make gcc python3 pkg-config libglib2.0-dev  -y
-	git clone https://gitee.com/openfde/libglibutil.git
+	git clone https://github.com/openfde/libglibutil.git
 	recompile=1
 else
 	cd libglibutil 
@@ -41,37 +41,40 @@ if [ $recompile -eq 1 ];then
 fi
 
 #weston
-#echo -e "\n\n\n ******************Installing weston*************************"
-#if [  ! -e weston ];then
-#	sudo apt install libpixman-1-dev libinput-dev libdrm-dev wayland-protocols libcairo2-dev libpango1.0-dev libjpeg-dev libwebp-dev libsystemd-dev libpam0g-dev libgbm-dev libva-dev freerdp2-dev libx11-xcb-dev libxcb-xkb-dev libxcb-composite0-dev liblcms2-dev libcolord-dev libgstreamer-plugins-base1.0-dev libpipewire-0.2-dev libxml2-dev libxkbcommon-dev libdbus-1-dev libxcursor-dev meson cmake -y
-#	git clone https://gitee.com/openfde/weston
-#	recompile=1
-#else
-#	cd weston
-#	result=`isUpdated fde_8.0.0` 
-#	echo -e "************************ weston is $result ************************"
-#	if [ "$result" == "Need updated" ];then
-#		recompile=1
-#		git pull 
-#	fi
-#	cd - 1>/dev/null 
-#fi
-#if [ $recompile -eq 1 ];then
-#	recompile=0
-#	cd weston
-#	mkdir -p build
-#	meson build
-#	meson configure build --prefix=/usr
-#	sudo ninja -C build install
-#	cd - 1>/dev/null 
-#fi
+. /etc/lsb-release
+if [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];then
+	echo -e "\n\n\n ******************Installing weston*************************"
+	if [  ! -e weston ];then
+		sudo apt install libpixman-1-dev libinput-dev libdrm-dev wayland-protocols libcairo2-dev libpango1.0-dev libjpeg-dev libwebp-dev libsystemd-dev libpam0g-dev libgbm-dev libva-dev freerdp2-dev libx11-xcb-dev libxcb-xkb-dev libxcb-composite0-dev liblcms2-dev libcolord-dev libgstreamer-plugins-base1.0-dev libpipewire-0.2-dev libxml2-dev libxkbcommon-dev libdbus-1-dev libxcursor-dev meson cmake -y
+		git clone https://github.com/openfde/weston
+		recompile=1
+	else
+		cd weston
+		result=`isUpdated fde_8.0.0` 
+		echo -e "************************ weston is $result ************************"
+		if [ "$result" == "Need updated" ];then
+			recompile=1
+			git pull 
+		fi
+		cd - 1>/dev/null 
+	fi
+	if [ $recompile -eq 1 ];then
+		recompile=0
+		cd weston
+		mkdir -p build
+		meson build
+		meson configure build --prefix=/usr
+		sudo ninja -C build install
+		cd - 1>/dev/null 
+	fi
+fi
 
 #gibinder-python
 
 #libgbinder
 echo -e "\n\n\n ******************Installing libgbinder****************************"
 if [  ! -e libgbinder ];then
-	git clone https://gitee.com/openfde/libgbinder.git
+	git clone https://github.com/openfde/libgbinder.git
 	recompile=1
 else
 	cd libgbinder
@@ -96,7 +99,7 @@ fi
 echo -e "\n\n\n ******************Installing gbinder-python****************************"
 if [  ! -e gbinder-python ];then
 	sudo apt install python3-pip cython3 lxc curl ca-certificates -y
-	git clone https://gitee.com/openfde/gbinder-python.git
+	git clone https://github.com/openfde/gbinder-python.git
 	sudo pip3 install pyclip -i https://mirrors.aliyun.com/pypi/simple
 	recompile=1
 else
@@ -120,7 +123,7 @@ fi
 #waydroid
 echo  -e "\n\n\n ******************Installing waydroid ****************************"
 if [  ! -e waydroid_waydroid ];then
-	git clone https://gitee.com/openfde/waydroid_waydroid.git
+	git clone https://github.com/openfde/waydroid_waydroid.git
 	recompile=1
 else
 	cd waydroid_waydroid
@@ -140,33 +143,57 @@ if [ $recompile -eq 1 ];then
 fi
 
 #build mesa 20.1.0 for kylin v10 sp1 kernel 5.4.18-85
-. /etc/lsb-release
-if [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];then
-	echo  -e "\n\n\n ******************Installing mesa ****************************"
-	if [ ! -e mesa ];then
-		git clone https://gitee.com/openfde/mesa.git 
-		cd mesa
+#. /etc/lsb-release
+#if [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];then
+#	echo  -e "\n\n\n ******************Installing mesa ****************************"
+#	if [ ! -e mesa ];then
+#		git clone https://github.com/openfde/mesa.git 
+#		cd mesa
+#		recompile=1
+#		git checkout origin/20.1.0_fde_w_for_kylinv10 -b 20.1.0_fde_w_for_kylinv10
+#		sudo apt install bison flex  libwayland-egl-backend-dev  libxcb-glx0  libxcb-glx0-dev libxcb-dri2-0-dev libxcb-dri3-dev  libxcb-present-dev  libxshmfence-dev libxxf86vm-dev libxcb-shm0-dev libx11-xcb-dev -y
+#		cd - 1>/dev/null
+#	else
+#		cd mesa
+#		result=`isUpdated 20.1.0_fde_w_for_kylinv10` 
+#		echo -e "************************ mesa is $result ************************"
+#		if [ "$result" == "Need updated" ];then
+#			recompile=1
+#			git pull 
+#		fi
+#		cd - 1>/dev/null
+#	fi
+#	if [ $recompile -eq 1 ];then
+#		recompile=0
+#		cd mesa
+#		mkdir -p build
+#		meson build . 
+#		meson configure build -Dprefix=/usr
+#		sudo ninja -C build install
+#		cd - 1>/dev/null
+#	fi
+#fi
+#fde_renderer the daemon of emugl on host linux
+if [ ! -e "fde_emugl" ];then
+	git clone https://github.com/openfde/fde_emugl
+	cd fde_emugl 
+	recompile=1
+	cd - 1>/dev/null
+	sudo apt install -y libboost-dev liblz4-dev
+else
+	cd fde_emugl
+	result=`isUpdated main`
+	echo -e "************************ fde_emugl is $result ************************"
+	if [ "$result" == "Need updated" ];then
 		recompile=1
-		git checkout origin/20.1.0_fde_w_for_kylinv10 -b 20.1.0_fde_w_for_kylinv10
-		sudo apt install bison flex  libwayland-egl-backend-dev  libxcb-glx0  libxcb-glx0-dev libxcb-dri2-0-dev libxcb-dri3-dev  libxcb-present-dev  libxshmfence-dev libxxf86vm-dev libxcb-shm0-dev libx11-xcb-dev -y
-		cd - 1>/dev/null
-	else
-		cd mesa
-		result=`isUpdated 20.1.0_fde_w_for_kylinv10` 
-		echo -e "************************ mesa is $result ************************"
-		if [ "$result" == "Need updated" ];then
-			recompile=1
-			git pull 
-		fi
-		cd - 1>/dev/null
+		git pull 
 	fi
+	cd - 1>/dev/null
 	if [ $recompile -eq 1 ];then
 		recompile=0
-		cd mesa
-		mkdir -p build
-		meson build . 
-		meson configure build -Dprefix=/usr
-		sudo ninja -C build install
+		cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -G Ninja -B build/
+		cmake --build build/
+		cmake --install build/
 		cd - 1>/dev/null
 	fi
 fi
@@ -196,7 +223,7 @@ fi
 echo -e "\n\n\n ******************Building fde_fs****************************"
 if [ ! -e fde_fs ];then
 	sudo apt install  libfuse-dev fuse3 -y
-	git clone https://gitee.com/openfde/fde_fs.git
+	git clone https://github.com/openfde/fde_fs.git
 	recompile=1
 else
 	cd fde_fs
@@ -219,7 +246,7 @@ fi
 echo  -e "\n\n\n ******************Building fde_tigervncserver****************************"
 #tiger_vncserver
 if [ ! -e fde_tigervncserver ];then
-	git clone https://gitee.com/openfde/fde_tigervncserver.git 
+	git clone https://github.com/openfde/fde_tigervncserver.git 
 	cd fde_tigervncserver
 	recompile=1
 	sudo dpkg -i xorg-server-source_2%3a1.20.13-1ubuntu1~20.04.8_all.deb
@@ -250,7 +277,7 @@ fi
 echo  -e "\n\n\n ******************Building fdeime****************************"
 if [ ! -e fdeime ];then
 	recompile=1
-	git clone https://gitee.com/openfde/fdeime.git
+	git clone https://github.com/openfde/fdeime.git
 	sudo apt install libibus-1.0-dev -y
 else
 	cd fdeime
@@ -277,7 +304,7 @@ source /etc/lsb-release
 if [ "$DISTRIB_ID" = "Kylin" ] ;then
 	echo -e "\n\n\n ******************building mutter****************************"
 	if [ ! -e mutter ];then
-		git clone https://gitee.com/openfde/mutter.git 
+		git clone https://github.com/openfde/mutter.git 
 		recompile=1
 		sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon
 	else
@@ -303,7 +330,7 @@ fi
 #fde_ctrl
 echo -e "\n\n\n ******************Building fde_ctrl****************************"
 if [  ! -e fde_ctrl ];then
-	git clone https://gitee.com/openfde/fde_ctrl.git
+	git clone https://github.com/openfde/fde_ctrl.git
 	sudo apt install libx11-dev i3 -y
 	recompile=1
 	sudo rm -rf /usr/share/waydroid-sessions/i3.desktop
