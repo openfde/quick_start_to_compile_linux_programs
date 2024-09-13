@@ -42,12 +42,15 @@ fi
 
 #weston
 . /etc/lsb-release
-if [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];then
+if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$DISTRIB_ID" == "uos" ];then
 	echo -e "\n\n\n ******************Installing weston*************************"
 	if [  ! -e weston ];then
 		sudo apt install libpixman-1-dev libinput-dev libdrm-dev wayland-protocols libcairo2-dev libpango1.0-dev libjpeg-dev libwebp-dev libsystemd-dev libpam0g-dev libgbm-dev libva-dev freerdp2-dev libx11-xcb-dev libxcb-xkb-dev libxcb-composite0-dev liblcms2-dev libcolord-dev libgstreamer-plugins-base1.0-dev libpipewire-0.2-dev libxml2-dev libxkbcommon-dev libdbus-1-dev libxcursor-dev meson cmake -y
 		git clone https://gitee.com/openfde/weston
 		recompile=1
+		cd weston
+		git checkout fde_8.0.0
+		cd - 1>/dev/null
 	else
 		cd weston
 		result=`isUpdated fde_8.0.0` 
@@ -63,7 +66,7 @@ if [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];then
 		cd weston
 		mkdir -p build
 		meson build
-		meson configure build --prefix=/usr
+		meson configure build --prefix=/usr/local
 		sudo ninja -C build install
 		cd - 1>/dev/null 
 	fi
@@ -178,7 +181,7 @@ if [ ! -e "fde_emugl" ];then
 	cd fde_emugl 
 	recompile=1
 	cd - 1>/dev/null
-	sudo apt install -y libboost-dev liblz4-dev
+	sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev
 else
 	cd fde_emugl
 	result=`isUpdated main`
@@ -194,7 +197,7 @@ if [ $recompile -eq 1 ];then
 	cd fde_emugl
 	cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -G Ninja -B build/
 	cmake --build build/
-	cmake --install build/
+	sudo cmake --install build/
 	cd - 1>/dev/null
 fi
 
