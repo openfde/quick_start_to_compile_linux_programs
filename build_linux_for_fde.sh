@@ -328,6 +328,8 @@ if [ "$DISTRIB_ID" = "Kylin" ] ;then
 		sudo ninja -C build install && sudo ldconfig
 		cd - 1>/dev/null 
 	fi
+else
+	sudo apt install mutter -y
 fi
 
 #fde_ctrl
