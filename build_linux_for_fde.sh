@@ -361,7 +361,7 @@ fi
 echo -e "\n\n\n ******************Building fde_navi****************************"
 if [  ! -e fde_navi ];then
 	git clone https://gitee.com/openfde/fde_navi.git
-	sudo apt-get install -y qt5* wmctrl
+	sudo apt-get install -y qt5* wmctrl qtbase5-dev
 	recompile=1
 else
 	cd fde_navi
