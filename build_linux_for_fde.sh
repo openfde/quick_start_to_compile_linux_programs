@@ -181,7 +181,7 @@ if [ ! -e "fde_emugl" ];then
 	cd fde_emugl 
 	recompile=1
 	cd - 1>/dev/null
-	sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpicaccess-dev libxcb-dri3-dev libdrm-dev
+	sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpciaccess-dev libxcb-dri3-dev libdrm-dev
 else
 	cd fde_emugl
 	result=`isUpdated main`
