@@ -358,3 +358,29 @@ if [ $recompile -eq 1 ];then
 	cd - 1>/dev/null
 fi
 
+
+#fde_navi
+echo -e "\n\n\n ******************Building fde_navi****************************"
+if [  ! -e fde_navi ];then
+	git clone https://gitee.com/openfde/fde_navi.git
+	sudo apt-get install -y qt5* wmctrl
+	recompile=1
+else
+	cd fde_navi
+	result=`isUpdated "master"`
+	echo "************************ fde_navi  is $result ************************"
+	if [ "$result" == "Need updated" ];then
+		recompile=1
+		git pull 
+	fi
+	cd - 1>/dev/null
+fi
+if [ $recompile -eq 1 ];then
+	recompile=0
+	cd fde_navi
+	qmake
+	make
+	sudo cp -a fde_navi /usr/bin/
+	cd - 1>/dev/null
+fi
+
