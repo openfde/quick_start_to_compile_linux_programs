@@ -212,9 +212,7 @@ if [ "$goversion" != "go1.20.13" ];then
 	sudo apt install wget -y
 	wget https://go.dev/dl/go1.20.13.linux-arm64.tar.gz -O ~/go1.20.13.linux-arm64.tar.gz
 	cd ~ && tar -xf ~/go1.20.13.linux-arm64.tar.gz && cd go && sudo cp -a bin/* /usr/bin/
-	sudo sed -i "/GOROOT/d" ~/.bashrc
-	export GOROOT=~/go 
-	echo "export GOROOT=~/go" >> ~/.bashrc
+	sudo cp -a go /usr/local
 	sudo sed -i "/GOPATH/d" ~/.bashrc
 	mkdir ~/gopath -p 
 	export GOPATH=~/gopath 
