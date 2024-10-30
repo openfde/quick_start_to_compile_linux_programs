@@ -362,7 +362,7 @@ if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$
 	echo -e "\n\n\n ******************Building fde_navi****************************"
 	if [  ! -e fde_navi ];then
 		git clone https://gitee.com/openfde/fde_navi.git
-		sudo apt install -y qt5-qmake qtcreator wmctrl qtbase5-dev g++
+		sudo apt install -y qt5-qmake wmctrl qt5-default qtbase5-dev g++
 		recompile=1
 	else
 		cd fde_navi
