@@ -211,7 +211,7 @@ if [ "$goversion" != "go1.20.13" ];then
 	echo  -e "\n\n\n ******************installing go ****************************"
 	sudo apt install wget -y
 	wget https://go.dev/dl/go1.20.13.linux-arm64.tar.gz -O ~/go1.20.13.linux-arm64.tar.gz
-	cd ~ && tar -xf ~/go1.20.13.linux-arm64.tar.gz && cd go && sudo cp -a bin/* /usr/bin/
+	cd ~ && tar -xf ~/go1.20.13.linux-arm64.tar.gz &&  sudo cp -a go/bin/* /usr/bin/
 	sudo cp -a go /usr/local
 	sudo sed -i "/GOPATH/d" ~/.bashrc
 	mkdir ~/gopath -p 
