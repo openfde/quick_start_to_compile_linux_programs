@@ -302,32 +302,45 @@ fi
 
 #mutter
 source /etc/lsb-release
-if [ "$DISTRIB_ID" = "Kylin" ] ;then
-	echo -e "\n\n\n ******************building mutter****************************"
-	if [ ! -e mutter ];then
-		git clone https://gitee.com/openfde/mutter.git 
-		recompile=1
-		sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon libxkbfile-dev
-	else
-		cd mutter
-		result=`isUpdated "3.36.1_w"`
-		echo "************************ mutter  is $result ************************"
-		if [ "$result" == "Need updated" ];then
-			recompile=1
-			git pull 
-		fi
-		cd - 1>/dev/null
+echo -e "\n\n\n ******************building mutter****************************"
+if [ ! -e mutter ];then
+	git clone https://gitee.com/openfde/mutter.git
+	recompile=1
+	sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon libxkbfile-dev intltool
+	cd mutter
+	if [ "$DISTRIB_ID" = "Kylin" ] ;then
+		git checkout 3.36.1_w
+	elif  [ "$DISTRIB_ID" = "uos" ] ;then
+		git checkout 3.30.2_uos
 	fi
-	if [ $recompile -eq 1 ];then
-		recompile=0
-		cd mutter
+	cd -  1>/dev/null
+else
+	cd mutter
+	if [ "$DISTRIB_ID" = "Kylin" ] ;then
+		result=`isUpdated "3.36.1_w"`
+	elif  [ "$DISTRIB_ID" = "uos" ] ;then
+		result=`isUpdated "3.30.2_uos"`
+	fi
+	echo "************************ mutter  is $result ************************"
+	if [ "$result" == "Need updated" ];then
+		recompile=1
+		git pull 
+	fi
+	cd - 1>/dev/null
+fi
+if [ $recompile -eq 1 ];then
+	cd mutter
+	recompile=0
+	if  [ "$DISTRIB_ID" = "uos" ] ;then
+		./autogen.sh
+		make -j4
+		sudo make install
+	else
 		mkdir -p build
 		meson build . && ninja -C build -j4
 		sudo ninja -C build install && sudo ldconfig
-		cd - 1>/dev/null 
 	fi
-else
-	sudo apt install mutter -y
+	cd - 1>/dev/null 
 fi
 
 #fde_ctrl
