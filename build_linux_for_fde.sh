@@ -312,15 +312,31 @@ if [ ! -e mutter ];then
 		git checkout 3.36.1_w
 	elif  [ "$DISTRIB_ID" = "uos" ] ;then
 		git checkout 3.30.2_uos
+		sudo apt install -y libgbm-dev libelogind-dev libgles2-mesa-dev
+	elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
+		git checkout 42.9_ubuntu
 	fi
 	cd -  1>/dev/null
 else
 	cd mutter
+	branch=`git branch |grep '*' |awk -F " " '{print $2}' `
+	tarbranch="3.36.1_w"
 	if [ "$DISTRIB_ID" = "Kylin" ] ;then
-		result=`isUpdated "3.36.1_w"`
+		if [ "$branch" != "3.36.1_w" ];then
+			git checkout 3.36.1_w
+		fi
 	elif  [ "$DISTRIB_ID" = "uos" ] ;then
-		result=`isUpdated "3.30.2_uos"`
+		if [ "$branch" != "3.30.2_uos" ];then
+			git checkout 3.30.2_uos
+		fi
+		tarbranch="3.30.2_uos"
+	elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
+		if [ "$branch" != "42.9_ubuntu" ];then
+			git checkout 42.9_ubuntu
+		fi
+		tarbranch="42.9_ubuntu"
 	fi
+	result=`isUpdated "$tarbranch"`
 	echo "************************ mutter  is $result ************************"
 	if [ "$result" == "Need updated" ];then
 		recompile=1
