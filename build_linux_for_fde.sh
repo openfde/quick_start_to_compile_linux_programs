@@ -119,6 +119,7 @@ if [ $recompile -eq 1 ];then
 	cd gbinder-python
 	sudo python3 setup.py build_ext --inplace --cython
 	sudo python3 setup.py install
+	sudo python3 setup.py sdist --cython
 	cd - 1>/dev/null
 fi
 
