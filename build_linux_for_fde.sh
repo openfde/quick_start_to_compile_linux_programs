@@ -103,7 +103,6 @@ echo -e "\n\n\n ******************Installing gbinder-python*********************
 if [  ! -e gbinder-python ];then
 	sudo apt install python3-pip cython3 lxc curl ca-certificates -y
 	git clone https://gitee.com/openfde/gbinder-python.git
-	sudo pip3 install pyclip -i https://mirrors.aliyun.com/pypi/simple
 	recompile=1
 else
 	cd gbinder-python
@@ -314,7 +313,11 @@ if [ ! -e mutter ];then
 		git checkout 3.30.2_uos
 		sudo apt install -y libgbm-dev libelogind-dev libgles2-mesa-dev
 	elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
-		git checkout 42.9_ubuntu
+		if [ "$DISTRIB_CODENAME" = "jammy" ];then
+			git checkout 42.9_ubuntu
+		elif [ "$DISTRIB_CODENAME" = "noble" ];then
+			git checkout 46.2_ubuntu
+		fi
 	fi
 	cd -  1>/dev/null
 else
@@ -331,10 +334,17 @@ else
 		fi
 		tarbranch="3.30.2_uos"
 	elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
-		if [ "$branch" != "42.9_ubuntu" ];then
-			git checkout 42.9_ubuntu
+		if [ "$DISTRIB_CODENAME" = "jammy" ];then
+			if [ "$branch" != "42.9_ubuntu" ];then
+				git checkout 42.9_ubuntu
+			fi
+			tarbranch="42.9_ubuntu"
+		elif [ "$DISTRIB_CODENAME" = "noble" ];then
+			if [ "$branch" != "46.2_ubuntu" ];then
+				git checkout 46.2_ubuntu
+			fi
+			tarbranch="46.2_ubuntu"
 		fi
-		tarbranch="42.9_ubuntu"
 	fi
 	result=`isUpdated "$tarbranch"`
 	echo "************************ mutter  is $result ************************"
