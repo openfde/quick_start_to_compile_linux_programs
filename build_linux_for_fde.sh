@@ -243,35 +243,35 @@ if [ $recompile -eq 1 ];then
 	cd - 1>/dev/null 
 fi
 
-echo  -e "\n\n\n ******************Building fde_tigervncserver****************************"
+#echo  -e "\n\n\n ******************Building fde_tigervncserver****************************"
 #tiger_vncserver
-if [ ! -e fde_tigervncserver ];then
-	git clone https://gitee.com/openfde/fde_tigervncserver.git 
-	cd fde_tigervncserver
-	recompile=1
-	sudo dpkg -i xorg-server-source_2%3a1.20.13-1ubuntu1~20.04.8_all.deb
-	sudo apt install cdbs cmake pristine-tar libjpeg-dev libgnutls28-dev libpam0g-dev libxft-dev libxcursor-dev libxrandr-dev libxdamage-dev libwrap0-dev libfltk1.3-dev xserver-xorg-dev debhelper po-debconf quilt bison flex xutils-dev x11proto-dev xtrans-dev libxau-dev libxdmcp-dev libxfont-dev libxkbfile-dev libpixman-1-dev libpciaccess-dev libgcrypt-dev nettle-dev libudev-dev libaudit-dev libdrm-dev libgl1-mesa-dev libunwind-dev libxmuu-dev libxext-dev libx11-dev libxrender-dev libxi-dev libdmx-dev libxpm-dev libxaw7-dev libxt-dev libxmu-dev libxtst-dev libxres-dev libxfixes-dev libxv-dev libxinerama-dev libxshmfence-dev libepoxy-dev libegl1-mesa-dev libgbm-dev libbsd-dev libdbus-1-dev libsystemd-dev -y
-	sudo dpkg -i tigervnc-build-deps_1.10.1+dfsg-3_arm64.deb
-	sudo apt install equivs devscripts --no-install-recommends -y
-	sudo mk-build-deps -i -t "apt-get" -r
-	cd -
-else
-	cd fde_tigervncserver
-	result=`isUpdated fde_w` 
-	echo -e "************************ fde_tigervncserver is $result ************************"
-	if [ "$result" == "Need updated" ];then
-		recompile=1
-		git pull 
-	fi
-	cd - 1>/dev/null
-fi
-if [ $recompile -eq 1 ];then
-	recompile=0
-	cd fde_tigervncserver
-	sudo DEB_BUILD_OPTIONS="parallel=8" dpkg-buildpackage -b -uc -us
-	cd - 1>/dev/null && sudo apt install libfile-readbackwards-perl
-	sudo dpkg  -i  tigervnc-standalone-server_1.10.1+dfsg-3_arm64.deb
-fi
+#if [ ! -e fde_tigervncserver ];then
+#	git clone https://gitee.com/openfde/fde_tigervncserver.git 
+#	cd fde_tigervncserver
+#	recompile=1
+#	sudo dpkg -i xorg-server-source_2%3a1.20.13-1ubuntu1~20.04.8_all.deb
+#	sudo apt install cdbs cmake pristine-tar libjpeg-dev libgnutls28-dev libpam0g-dev libxft-dev libxcursor-dev libxrandr-dev libxdamage-dev libwrap0-dev libfltk1.3-dev xserver-xorg-dev debhelper po-debconf quilt bison flex xutils-dev x11proto-dev xtrans-dev libxau-dev libxdmcp-dev libxfont-dev libxkbfile-dev libpixman-1-dev libpciaccess-dev libgcrypt-dev nettle-dev libudev-dev libaudit-dev libdrm-dev libgl1-mesa-dev libunwind-dev libxmuu-dev libxext-dev libx11-dev libxrender-dev libxi-dev libdmx-dev libxpm-dev libxaw7-dev libxt-dev libxmu-dev libxtst-dev libxres-dev libxfixes-dev libxv-dev libxinerama-dev libxshmfence-dev libepoxy-dev libegl1-mesa-dev libgbm-dev libbsd-dev libdbus-1-dev libsystemd-dev -y
+#	sudo dpkg -i tigervnc-build-deps_1.10.1+dfsg-3_arm64.deb
+#	sudo apt install equivs devscripts --no-install-recommends -y
+#	sudo mk-build-deps -i -t "apt-get" -r
+#	cd -
+#else
+#	cd fde_tigervncserver
+#	result=`isUpdated fde_w` 
+#	echo -e "************************ fde_tigervncserver is $result ************************"
+#	if [ "$result" == "Need updated" ];then
+#		recompile=1
+#		git pull 
+#	fi
+#	cd - 1>/dev/null
+#fi
+#if [ $recompile -eq 1 ];then
+#	recompile=0
+#	cd fde_tigervncserver
+#	sudo DEB_BUILD_OPTIONS="parallel=8" dpkg-buildpackage -b -uc -us
+#	cd - 1>/dev/null && sudo apt install libfile-readbackwards-perl
+#	sudo dpkg  -i  tigervnc-standalone-server_1.10.1+dfsg-3_arm64.deb
+#fi
 
 #fdeime
 echo  -e "\n\n\n ******************Building fdeime****************************"
