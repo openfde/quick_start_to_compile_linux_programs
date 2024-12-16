@@ -385,7 +385,7 @@ fi
 echo -e "\n\n\n ******************Building fde_ctrl****************************"
 if [  ! -e fde_ctrl ];then
 	git clone https://gitee.com/openfde/fde_ctrl.git
-	sudo apt install libx11-dev i3 -y
+	sudo apt install mutter libx11-dev i3 -y
 	recompile=1
 	sudo rm -rf /usr/share/waydroid-sessions/i3.desktop
 else
