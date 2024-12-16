@@ -41,7 +41,6 @@ if [ $recompile -eq 1 ];then
 fi
 
 #weston
-. /etc/lsb-release
 if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$DISTRIB_ID" == "uos" ];then
 	echo -e "\n\n\n ******************Installing weston*************************"
 	if [  ! -e weston ];then
@@ -301,7 +300,14 @@ fi
 
 
 #mutter
-source /etc/lsb-release
+if [  ! -e /etc/lsb-release ];then
+	source /etc/os-release
+	if [ "$ID" = "debian" ];then
+		DISTRIB_ID="Debian"
+	fi
+else
+	source /etc/lsb-release
+fi
 echo -e "\n\n\n ******************building mutter****************************"
 if [ ! -e mutter ];then
 	git clone https://gitee.com/openfde/mutter.git
@@ -310,6 +316,8 @@ if [ ! -e mutter ];then
 	cd mutter
 	if [ "$DISTRIB_ID" = "Kylin" ] ;then
 		git checkout 3.36.1_w
+	elif  [ "$DISTRIB_ID" = "Debian" ] ;then
+		git checkout 43.8_debian
 	elif  [ "$DISTRIB_ID" = "uos" ] ;then
 		git checkout 3.30.2_uos
 		sudo apt install -y libgbm-dev libelogind-dev libgles2-mesa-dev
@@ -329,6 +337,9 @@ else
 		if [ "$branch" != "3.36.1_w" ];then
 			git checkout 3.36.1_w
 		fi
+	elif  [ "$DISTRIB_ID" = "Debian" ] ;then
+		git checkout 43.8_debian
+		tarbranch="43.8_debian"
 	elif  [ "$DISTRIB_ID" = "uos" ] ;then
 		if [ "$branch" != "3.30.2_uos" ];then
 			git checkout 3.30.2_uos
