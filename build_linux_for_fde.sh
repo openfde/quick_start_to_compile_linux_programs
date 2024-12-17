@@ -317,7 +317,7 @@ if [ ! -e mutter ];then
 	if [ "$DISTRIB_ID" = "Kylin" ] ;then
 		git checkout 3.36.1_w
 	elif  [ "$DISTRIB_ID" = "Debian" ] ;then
-		sudo apt install -y libcolord-dev liblcms2-dev libpipewire-0.3-dev xvfb xcvt
+		sudo apt install -y libgbm-dev libcolord-dev liblcms2-dev libpipewire-0.3-dev xvfb xcvt
 		git checkout 43.8_debian
 	elif  [ "$DISTRIB_ID" = "uos" ] ;then
 		git checkout 3.30.2_uos
