@@ -35,7 +35,6 @@ if [ $recompile -eq 1 ];then
 	recompile=0
 	cd libglibutil
 	make
-	sudo make install
 	sudo make install-dev
 	cd - 1>/dev/null 
 fi
@@ -92,7 +91,6 @@ if [ $recompile -eq 1 ];then
 	recompile=0
 	cd libgbinder
 	make
-	sudo make install
 	sudo make install-dev
 	cd - 1>/dev/null 
 fi
