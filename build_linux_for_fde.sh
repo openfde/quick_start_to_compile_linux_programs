@@ -39,6 +39,14 @@ if [ $recompile -eq 1 ];then
 	cd - 1>/dev/null 
 fi
 
+if [  ! -e /etc/lsb-release ];then
+	source /etc/os-release
+	if [ "$ID" = "debian" ];then
+		DISTRIB_ID="Debian"
+	fi
+else
+	source /etc/lsb-release
+fi
 #weston
 if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$DISTRIB_ID" == "uos" ];then
 	echo -e "\n\n\n ******************Installing weston*************************"
@@ -298,14 +306,6 @@ fi
 
 
 #mutter
-if [  ! -e /etc/lsb-release ];then
-	source /etc/os-release
-	if [ "$ID" = "debian" ];then
-		DISTRIB_ID="Debian"
-	fi
-else
-	source /etc/lsb-release
-fi
 echo -e "\n\n\n ******************building mutter****************************"
 if [ ! -e mutter ];then
 	git clone https://gitee.com/openfde/mutter.git
