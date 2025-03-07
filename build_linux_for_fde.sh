@@ -397,9 +397,11 @@ fi
 echo -e "\n\n\n ******************Building fde_ctrl****************************"
 if [  ! -e fde_ctrl ];then
 	git clone https://gitee.com/openfde/fde_ctrl.git
-	sudo apt install mutter ddcutil libx11-dev i3 -y
+	if [ "$DISTRIB_ID" != "Deepin" ];then
+		sudo apt install -y mutter
+	fi
+	sudo apt install ddcutil libx11-dev  -y
 	recompile=1
-	sudo rm -rf /usr/share/waydroid-sessions/i3.desktop
 else
 	cd fde_ctrl
 	result=`isUpdated "main"`
