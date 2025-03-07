@@ -48,18 +48,28 @@ else
 	source /etc/lsb-release
 fi
 #weston
-if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$DISTRIB_ID" == "uos" ];then
+if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$DISTRIB_ID" == "uos" ] || [ "$DISTRIB_ID" == "Deepin" ];then
 	echo -e "\n\n\n ******************Installing weston*************************"
 	if [  ! -e weston ];then
-		sudo apt install libpixman-1-dev libinput-dev libdrm-dev wayland-protocols libcairo2-dev libpango1.0-dev libjpeg-dev libwebp-dev libsystemd-dev libpam0g-dev libgbm-dev libva-dev freerdp2-dev libx11-xcb-dev libxcb-xkb-dev libxcb-composite0-dev liblcms2-dev libcolord-dev libgstreamer-plugins-base1.0-dev libpipewire-0.2-dev libxml2-dev libxkbcommon-dev libdbus-1-dev libxcursor-dev meson cmake -y
+		sudo apt install libpixman-1-dev libinput-dev libdrm-dev wayland-protocols libcairo2-dev libpango1.0-dev libjpeg-dev libwebp-dev libsystemd-dev libpam0g-dev libgbm-dev libva-dev freerdp2-dev libx11-xcb-dev libxcb-xkb-dev libxcb-composite0-dev liblcms2-dev libcolord-dev libgstreamer-plugins-base1.0-dev libxml2-dev libxkbcommon-dev libdbus-1-dev libxcursor-dev meson cmake -y
 		git clone https://gitee.com/openfde/weston
 		recompile=1
 		cd weston
-		git checkout fde_8.0.0
+		if  [ "$DISTRIB_ID" == "Kylin" ] || [ "$DISTRIB_ID" == "uos" ];then 
+			sudo apt install -y libpipewire-0.2-dev
+			git checkout fde_8.0.0
+		elif [ "$DISTRIB_ID" == "Deepin" ];then
+			sudo apt install -y libseat-dev libpipewire-0.3-dev libxcb-cursor-dev
+			git checkout fde_12.0.1
+		fi
 		cd - 1>/dev/null
 	else
 		cd weston
-		result=`isUpdated fde_8.0.0` 
+		if  [ "$DISTRIB_ID" == "Kylin" ] || [ "$DISTRIB_ID" == "uos" ];then 
+			result=`isUpdated fde_8.0.0` 
+		elif [ "$DISTRIB_ID" == "Deepin" ];then
+			result=`isUpdated fde_12.0.1` 
+		fi
 		echo -e "************************ weston is $result ************************"
 		if [ "$result" == "Need updated" ];then
 			recompile=1
