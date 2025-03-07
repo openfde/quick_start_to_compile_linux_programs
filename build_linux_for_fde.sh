@@ -59,7 +59,7 @@ if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$
 			sudo apt install -y libpipewire-0.2-dev
 			git checkout fde_8.0.0
 		elif [ "$DISTRIB_ID" == "Deepin" ];then
-			sudo apt install -y libseat-dev libpipewire-0.3-dev libxcb-cursor-dev
+			sudo apt install -y libseat-dev libpipewire-0.3-dev libxcb-cursor-dev libneatvnc-dev
 			git checkout fde_12.0.1
 		fi
 		cd - 1>/dev/null
