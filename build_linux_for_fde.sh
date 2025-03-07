@@ -317,7 +317,7 @@ fi
 
 #mutter
 #uos and deepin doesn't support mutter
-if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "deepin" ];then 
+if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then 
 	echo -e "\n\n\n ******************building mutter****************************"
 	if [ ! -e mutter ];then
 		git clone https://gitee.com/openfde/mutter.git
