@@ -316,78 +316,81 @@ fi
 
 
 #mutter
-echo -e "\n\n\n ******************building mutter****************************"
-if [ ! -e mutter ];then
-	git clone https://gitee.com/openfde/mutter.git
-	recompile=1
-	sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon libxkbfile-dev intltool libgbm-dev
-	cd mutter
-	if [ "$DISTRIB_ID" = "Kylin" ] ;then
-		git checkout 3.36.1_w
-	elif  [ "$DISTRIB_ID" = "Debian" ] ;then
-		sudo apt install -y libgbm-dev libcolord-dev liblcms2-dev libpipewire-0.3-dev xvfb xcvt
-		git checkout 43.8_debian
-	elif  [ "$DISTRIB_ID" = "uos" ] ;then
-		git checkout 3.30.2_uos
-		sudo apt install -y libgbm-dev libelogind-dev libgles2-mesa-dev
-	elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
-		if [ "$DISTRIB_CODENAME" = "jammy" ];then
-			git checkout 42.9_ubuntu
-		elif [ "$DISTRIB_CODENAME" = "noble" ];then
-			git checkout 46.2_ubuntu
-		fi
-	fi
-	cd -  1>/dev/null
-else
-	cd mutter
-	branch=`git branch |grep '*' |awk -F " " '{print $2}' `
-	tarbranch="3.36.1_w"
-	if [ "$DISTRIB_ID" = "Kylin" ] ;then
-		if [ "$branch" != "3.36.1_w" ];then
+#uos and deepin doesn't support mutter
+if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "deepin" ];then 
+	echo -e "\n\n\n ******************building mutter****************************"
+	if [ ! -e mutter ];then
+		git clone https://gitee.com/openfde/mutter.git
+		recompile=1
+		sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon libxkbfile-dev intltool libgbm-dev
+		cd mutter
+		if [ "$DISTRIB_ID" = "Kylin" ] ;then
 			git checkout 3.36.1_w
-		fi
-	elif  [ "$DISTRIB_ID" = "Debian" ] ;then
-		git checkout 43.8_debian
-		tarbranch="43.8_debian"
-	elif  [ "$DISTRIB_ID" = "uos" ] ;then
-		if [ "$branch" != "3.30.2_uos" ];then
-			git checkout 3.30.2_uos
-		fi
-		tarbranch="3.30.2_uos"
-	elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
-		if [ "$DISTRIB_CODENAME" = "jammy" ];then
-			if [ "$branch" != "42.9_ubuntu" ];then
+		elif  [ "$DISTRIB_ID" = "Debian" ] ;then
+			sudo apt install -y libgbm-dev libcolord-dev liblcms2-dev libpipewire-0.3-dev xvfb xcvt
+			git checkout 43.8_debian
+		#elif  [ "$DISTRIB_ID" = "uos" ] ;then
+		#	git checkout 3.30.2_uos
+		#	sudo apt install -y libgbm-dev libelogind-dev libgles2-mesa-dev
+		elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
+			if [ "$DISTRIB_CODENAME" = "jammy" ];then
 				git checkout 42.9_ubuntu
-			fi
-			tarbranch="42.9_ubuntu"
-		elif [ "$DISTRIB_CODENAME" = "noble" ];then
-			if [ "$branch" != "46.2_ubuntu" ];then
+			elif [ "$DISTRIB_CODENAME" = "noble" ];then
 				git checkout 46.2_ubuntu
 			fi
-			tarbranch="46.2_ubuntu"
 		fi
-	fi
-	result=`isUpdated "$tarbranch"`
-	echo "************************ mutter  is $result ************************"
-	if [ "$result" == "Need updated" ];then
-		recompile=1
-		git pull 
-	fi
-	cd - 1>/dev/null
-fi
-if [ $recompile -eq 1 ];then
-	cd mutter
-	recompile=0
-	if  [ "$DISTRIB_ID" = "uos" ] ;then
-		./autogen.sh
-		make -j4
-		sudo make install
+		cd -  1>/dev/null
 	else
-		mkdir -p build
-		meson build . && ninja -C build -j4
-		sudo ninja -C build install && sudo ldconfig
+		cd mutter
+		branch=`git branch |grep '*' |awk -F " " '{print $2}' `
+		tarbranch="3.36.1_w"
+		if [ "$DISTRIB_ID" = "Kylin" ] ;then
+			if [ "$branch" != "3.36.1_w" ];then
+				git checkout 3.36.1_w
+			fi
+		elif  [ "$DISTRIB_ID" = "Debian" ] ;then
+			git checkout 43.8_debian
+			tarbranch="43.8_debian"
+		#elif  [ "$DISTRIB_ID" = "uos" ] ;then
+		#	if [ "$branch" != "3.30.2_uos" ];then
+		#		git checkout 3.30.2_uos
+		#	fi
+		#	tarbranch="3.30.2_uos"
+		elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
+			if [ "$DISTRIB_CODENAME" = "jammy" ];then
+				if [ "$branch" != "42.9_ubuntu" ];then
+					git checkout 42.9_ubuntu
+				fi
+				tarbranch="42.9_ubuntu"
+			elif [ "$DISTRIB_CODENAME" = "noble" ];then
+				if [ "$branch" != "46.2_ubuntu" ];then
+					git checkout 46.2_ubuntu
+				fi
+				tarbranch="46.2_ubuntu"
+			fi
+		fi
+		result=`isUpdated "$tarbranch"`
+		echo "************************ mutter  is $result ************************"
+		if [ "$result" == "Need updated" ];then
+			recompile=1
+			git pull 
+		fi
+		cd - 1>/dev/null
 	fi
-	cd - 1>/dev/null 
+	if [ $recompile -eq 1 ];then
+		cd mutter
+		recompile=0
+		if  [ "$DISTRIB_ID" = "uos" ] ;then
+			./autogen.sh
+			make -j4
+			sudo make install
+		else
+			mkdir -p build
+			meson build . && ninja -C build -j4
+			sudo ninja -C build install && sudo ldconfig
+		fi
+		cd - 1>/dev/null 
+	fi
 fi
 
 #fde_ctrl
