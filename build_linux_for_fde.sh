@@ -197,9 +197,21 @@ if [ ! -e "fde_emugl" ];then
 	recompile=1
 	cd - 1>/dev/null
 	sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpciaccess-dev libxcb-dri3-dev libdrm-dev
+	if [ "$DISTRIB_ID" = "Ubuntu" -a "$DISTRIB_CODENAME" = "noble" ] ;then
+		git checkout ubuntu_24.04
+	fi
 else
 	cd fde_emugl
-	result=`isUpdated main`
+	tarbranch="main"
+	if  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
+		if [ "$DISTRIB_CODENAME" = "noble" ];then
+			if [ "$branch" != "ubuntu_24.04" ];then
+				git checkout origin/ubuntu24.04 -b ubuntu24.04
+				tarbranch="ubuntu24.04"
+			fi
+		fi
+	fi
+	result=`isUpdated $tarbranch`
 	echo -e "************************ fde_emugl is $result ************************"
 	if [ "$result" == "Need updated" ];then
 		recompile=1
@@ -334,6 +346,7 @@ if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then
 		#	sudo apt install -y libgbm-dev libelogind-dev libgles2-mesa-dev
 		elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
 			if [ "$DISTRIB_CODENAME" = "jammy" ];then
+				sudo apt install -y libgbm-dev libcolord-dev liblcms2-dev libpipewire-0.3-dev xvfb xcvt
 				git checkout 42.9_ubuntu
 			elif [ "$DISTRIB_CODENAME" = "noble" ];then
 				git checkout 46.2_ubuntu
