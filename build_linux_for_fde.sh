@@ -193,13 +193,13 @@ fi
 echo -e "\n\n\n************************ Installing fde_emugl ************************"
 if [ ! -e "fde_emugl" ];then
 	git clone https://gitee.com/openfde/fde_emugl
+	sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpciaccess-dev libxcb-dri3-dev libdrm-dev
 	cd fde_emugl 
 	recompile=1
-	cd - 1>/dev/null
-	sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpciaccess-dev libxcb-dri3-dev libdrm-dev
 	if [ "$DISTRIB_ID" = "Ubuntu" -a "$DISTRIB_CODENAME" = "noble" ] ;then
 		git checkout ubuntu_24.04
 	fi
+	cd - 1>/dev/null
 else
 	cd fde_emugl
 	tarbranch="main"
