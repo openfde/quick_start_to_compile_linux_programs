@@ -206,7 +206,7 @@ else
 	if  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
 		if [ "$DISTRIB_CODENAME" = "noble" ];then
 			if [ "$branch" != "ubuntu24.04" ];then
-				git checkout origin/ubuntu24.04 -b ubuntu24.04
+				git checkout ubuntu24.04
 				tarbranch="ubuntu24.04"
 			fi
 		fi
