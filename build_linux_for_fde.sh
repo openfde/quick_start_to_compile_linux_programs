@@ -345,10 +345,12 @@ if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then
 		#	git checkout 3.30.2_uos
 		#	sudo apt install -y libgbm-dev libelogind-dev libgles2-mesa-dev
 		elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
+			sudo apt install -y liblcms2-dev libcolord-dev libpipewire-0.3-dev xvfb
 			if [ "$DISTRIB_CODENAME" = "jammy" ];then
-				sudo apt install -y libgbm-dev libcolord-dev liblcms2-dev libpipewire-0.3-dev xvfb xcvt
+				sudo apt install -y libgbm-dev xcvt
 				git checkout 42.9_ubuntu
 			elif [ "$DISTRIB_CODENAME" = "noble" ];then
+				sudo apt install -y libeis-dev libei-dev libcolord-gtk4-dev libgnome-desktop-4-dev gobject-introspection python3-dbusmock
 				git checkout 46.2_ubuntu
 			fi
 		fi
