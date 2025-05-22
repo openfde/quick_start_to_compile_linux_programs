@@ -145,7 +145,7 @@ if [  ! -e waydroid_waydroid ];then
 	recompile=1
 else
 	cd waydroid_waydroid
-	result=`isUpdated fde_w` 
+	result=`isUpdated fde_w_14` 
 	echo -e "************************ waydroid is $result ************************"
 	if [ "$result" == "Need updated" ];then
 		recompile=1
@@ -302,29 +302,29 @@ fi
 #fi
 
 #fdeime
-echo  -e "\n\n\n ******************Building fdeime****************************"
-if [ ! -e fdeime ];then
-	recompile=1
-	git clone https://gitee.com/openfde/fdeime.git
-	sudo apt install libibus-1.0-dev -y
-else
-	cd fdeime
-	result=`isUpdated master` 
-	echo -e "************************ fdeime is $result ************************"
-	if [ "$result" == "Need updated" ];then
-		recompile=1
-		git pull 
-	fi
-	cd - 1>/dev/null
-fi
-if [ $recompile -eq 1 ];then
-	recompile=0
-	cd fdeime
-	mkdir build -p
-	cmake -B build
-	sudo make -C build install
-	cd - 1>/dev/null
-fi
+#echo  -e "\n\n\n ******************Building fdeime****************************"
+#if [ ! -e fdeime ];then
+#	recompile=1
+#	git clone https://gitee.com/openfde/fdeime.git
+#	sudo apt install libibus-1.0-dev -y
+#else
+#	cd fdeime
+#	result=`isUpdated master` 
+#	echo -e "************************ fdeime is $result ************************"
+#	if [ "$result" == "Need updated" ];then
+#		recompile=1
+#		git pull 
+#	fi
+#	cd - 1>/dev/null
+#fi
+#if [ $recompile -eq 1 ];then
+#	recompile=0
+#	cd fdeime
+#	mkdir build -p
+#	cmake -B build
+#	sudo make -C build install
+#	cd - 1>/dev/null
+#fi
 
 
 #mutter
