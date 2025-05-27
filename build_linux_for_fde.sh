@@ -57,10 +57,12 @@ if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$
 		cd weston
 		if  [ "$DISTRIB_ID" == "Kylin" ] || [ "$DISTRIB_ID" == "uos" ];then 
 			pipe_dev=libpipewire-0.2-dev
+			set +e
 			sudo apt search ${pipe_dev} 2>/dev/null |grep ${pipe_dev}
 			if [ $? != 0 ];then
 				pipe_dev=libpipewire-0.3-dev
 			fi
+			set -e
 			sudo apt install -y ${pipe_dev}
 			git checkout fde_8.0.0
 		elif [ "$DISTRIB_ID" == "Deepin" ];then
