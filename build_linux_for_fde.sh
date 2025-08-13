@@ -14,11 +14,30 @@ function isUpdated() {
 	fi
 }
 
+if [  ! -e /etc/lsb-release ];then
+	source /etc/os-release
+	if [ "$ID" = "debian" ];then
+		DISTRIB_ID="Debian"
+	elif [ "$ID" = "arch" ];then
+		DISTRIB_ID="Arch"
+	fi
+else
+	source /etc/lsb-release
+fi
+
+if [ "$DISTRIB_ID" = "Arch" ];then
+	sudo pacman -S --needed --noconfirm base-devel
+fi
+
 echo -e "************************ Installing libglibuitl ************************"
 #libglibutil
 recompile=0
 if [  ! -e libglibutil ];then
-	sudo apt install git make gcc python3 pkg-config libglib2.0-dev  -y
+	if [ "$DISTRIB_ID" = "Arch" ];then
+		sudo pacman -S --needed --noconfirm git python glib2
+	else
+		sudo apt install git make gcc python3 pkg-config libglib2.0-dev  -y
+	fi
 	git clone https://gitee.com/openfde/libglibutil.git
 	recompile=1
 else
@@ -39,14 +58,6 @@ if [ $recompile -eq 1 ];then
 	cd - 1>/dev/null 
 fi
 
-if [  ! -e /etc/lsb-release ];then
-	source /etc/os-release
-	if [ "$ID" = "debian" ];then
-		DISTRIB_ID="Debian"
-	fi
-else
-	source /etc/lsb-release
-fi
 #weston
 if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$DISTRIB_ID" == "uos" ] || [ "$DISTRIB_ID" == "Deepin" ];then
 	echo -e "\n\n\n ******************Installing weston*************************"
@@ -100,7 +111,7 @@ fi
 #libgbinder
 echo -e "\n\n\n ******************Installing libgbinder****************************"
 if [  ! -e libgbinder ];then
-	git clone https://gitee.com/openfde/libgbinder.git
+	git clone https://github.com/hiruocha/libgbinder.git
 	recompile=1
 else
 	cd libgbinder
@@ -123,7 +134,11 @@ fi
 #gibinder-python
 echo -e "\n\n\n ******************Installing gbinder-python****************************"
 if [  ! -e gbinder-python ];then
-	sudo apt install python3-pip cython3 lxc curl ca-certificates -y
+	if [ "$DISTRIB_ID" = "Arch" ];then
+		sudo pacman -S --needed --noconfirm python-pip cython lxc curl python-setuptools
+	else
+		sudo apt install python3-pip cython3 lxc curl ca-certificates -y
+	fi
 	git clone https://gitee.com/openfde/gbinder-python.git
 	recompile=1
 else
@@ -152,7 +167,12 @@ if [  ! -e waydroid_waydroid ];then
 	recompile=1
 else
 	cd waydroid_waydroid
-	result=`isUpdated fde_w_14` 
+	if [ "$DISTRIB_ID" = "Arch" ];then
+		git checkout fde_w
+		result=`isUpdated fde_w` 
+	else
+		result=`isUpdated fde_w_14` 
+	fi
 	echo -e "************************ waydroid is $result ************************"
 	if [ "$result" == "Need updated" ];then
 		recompile=1
@@ -200,10 +220,17 @@ fi
 echo -e "\n\n\n************************ Installing fde_emugl ************************"
 if [ ! -e "fde_emugl" ];then
 	git clone https://gitee.com/openfde/fde_emugl
-	sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpciaccess-dev libxcb-dri3-dev libdrm-dev
+	if [ "$DISTRIB_ID" = "Arch" ];then
+		sudo pacman -S --needed --noconfirm boost lz4 cmake ninja mesa libunwind libpciaccess libxcb libdrm
+	else
+		sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpciaccess-dev libxcb-dri3-dev libdrm-dev
+	fi
 	cd fde_emugl 
 	recompile=1
 	if [ "$DISTRIB_ID" = "Ubuntu" -a "$DISTRIB_CODENAME" = "noble" ] ;then
+		git checkout ubuntu24.04
+	# 暂时用（已修复错误的）ubuntu分支
+	elif [ "$DISTRIB_ID" = "Arch" ] ;then
 		git checkout ubuntu24.04
 	fi
 	cd - 1>/dev/null
@@ -216,6 +243,12 @@ else
 				git checkout ubuntu24.04
 				tarbranch="ubuntu24.04"
 			fi
+		fi
+	# 暂时用（已修复错误的）ubuntu分支
+	elif [ "$DISTRIB_ID" = "Arch" ] ;then
+		if [ "$branch" != "ubuntu24.04" ];then
+			git checkout ubuntu24.04
+			tarbranch="ubuntu24.04"
 		fi
 	fi
 	result=`isUpdated $tarbranch`
@@ -235,29 +268,38 @@ if [ $recompile -eq 1 ];then
 	cd - 1>/dev/null
 fi
 
-#golang1.20.13
-if [ -e "/usr/bin/go" ];then
-	goversion=`go version |awk -F " " '{print $3}'`
+#golang
+if [ "$DISTRIB_ID" = "Arch" ];then
+	sudo pacman -S --needed --noconfirm go
+	go env -w GOPROXY=https://goproxy.cn,direct
 else
-	goversion="0"
-fi
-if [ "$goversion" != "go1.20.13" ];then
-	echo  -e "\n\n\n ******************installing go ****************************"
-	sudo apt install wget -y
-	wget https://go.dev/dl/go1.20.13.linux-arm64.tar.gz -O ~/go1.20.13.linux-arm64.tar.gz
-	cd ~ && tar -xf ~/go1.20.13.linux-arm64.tar.gz &&  sudo cp -a go/bin/* /usr/bin/
-	sudo cp -a go /usr/local
-	sudo sed -i "/GOPATH/d" ~/.bashrc
-	mkdir ~/gopath -p 
-	export GOPATH=~/gopath 
-	echo "export GOPATH=~/gopath" >> ~/.bashrc
-	cd - && go env -w GOPROXY=https://goproxy.cn,direct
+	if [ -e "/usr/bin/go" ];then
+		goversion=`go version |awk -F " " '{print $3}'`
+	else
+		goversion="0"
+	fi
+	if [ "$goversion" != "go1.20.13" ];then
+		echo  -e "\n\n\n ******************installing go ****************************"
+		sudo apt install wget -y
+		wget https://go.dev/dl/go1.20.13.linux-arm64.tar.gz -O ~/go1.20.13.linux-arm64.tar.gz
+		cd ~ && tar -xf ~/go1.20.13.linux-arm64.tar.gz &&  sudo cp -a go/bin/* /usr/bin/
+		sudo cp -a go /usr/local
+		sudo sed -i "/GOPATH/d" ~/.bashrc
+		mkdir ~/gopath -p 
+		export GOPATH=~/gopath 
+		echo "export GOPATH=~/gopath" >> ~/.bashrc
+		cd - && go env -w GOPROXY=https://goproxy.cn,direct
+	fi
 fi
 
 #fde_fs
 echo -e "\n\n\n ******************Building fde_fs****************************"
 if [ ! -e fde_fs ];then
-	sudo apt install  libfuse-dev fuse3 -y
+	if [ "$DISTRIB_ID" = "Arch" ];then
+		sudo pacman -S --needed --noconfirm fuse3 fuse2
+	else
+		sudo apt install  libfuse-dev fuse3 -y
+	fi
 	git clone https://gitee.com/openfde/fde_fs.git
 	recompile=1
 else
@@ -341,7 +383,11 @@ if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then
 	if [ ! -e mutter ];then
 		git clone https://gitee.com/openfde/mutter.git
 		recompile=1
-		sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon libxkbfile-dev intltool libgbm-dev
+		if [ "$DISTRIB_ID" = "Arch" ];then
+			sudo pacman -S --needed --noconfirm meson graphene gtk3 gsettings-desktop-schemas gnome-settings-daemon json-glib libxkbcommon-x11 libx11 libxcb libcanberra libgudev libinput startup-notification sysprof xorg-xwayland gnome-settings-daemon libxkbfile intltool libei colord-gtk4 gnome-desktop-4 gobject-introspection python-dbusmock wayland-protocols xorg-server-xvfb glib2-devel
+		else
+			sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon libxkbfile-dev intltool libgbm-dev
+		fi
 		cd mutter
 		if [ "$DISTRIB_ID" = "Kylin" ] ;then
 			git checkout 3.36.1_w
@@ -360,6 +406,8 @@ if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then
 				sudo apt install -y libeis-dev libei-dev libcolord-gtk4-dev libgnome-desktop-4-dev gobject-introspection python3-dbusmock
 				git checkout 46.2_ubuntu
 			fi
+		elif  [ "$DISTRIB_ID" = "Arch" ] ;then
+			git checkout 42.9_ubuntu
 		fi
 		cd -  1>/dev/null
 	else
@@ -390,6 +438,9 @@ if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then
 				fi
 				tarbranch="46.2_ubuntu"
 			fi
+		elif  [ "$DISTRIB_ID" = "Arch" ] ;then
+			git checkout 42.9_ubuntu
+			tarbranch="42.9_ubuntu"
 		fi
 		result=`isUpdated "$tarbranch"`
 		echo "************************ mutter  is $result ************************"
@@ -419,10 +470,14 @@ fi
 echo -e "\n\n\n ******************Building fde_ctrl****************************"
 if [  ! -e fde_ctrl ];then
 	git clone https://gitee.com/openfde/fde_ctrl.git
-	if [ "$DISTRIB_ID" != "Deepin" ];then
-		sudo apt install -y mutter
+	if [ "$DISTRIB_ID" = "Arch" ];then
+		sudo pacman -S --needed --noconfirm ddcutil
+	else
+		if [ "$DISTRIB_ID" != "Deepin" ];then
+			sudo apt install -y mutter
+		fi
+		sudo apt install ddcutil libx11-dev  -y
 	fi
-	sudo apt install ddcutil libx11-dev  -y
 	recompile=1
 else
 	cd fde_ctrl
@@ -449,7 +504,11 @@ if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$
 	echo -e "\n\n\n ******************Building fde_navi****************************"
 	if [  ! -e fde_navi ];then
 		git clone https://gitee.com/openfde/fde_navi.git
-		sudo apt install -y qt5-qmake wmctrl qt5-default qtbase5-dev g++
+		if [ "$DISTRIB_ID" = "Arch" ];then
+			sudo pacman -S --needed --noconfirm qt5-tools wmctrl qt5-base
+		else
+			sudo apt install -y qt5-qmake wmctrl qt5-default qtbase5-dev g++
+		fi
 		recompile=1
 	else
 		cd fde_navi
