@@ -235,18 +235,18 @@ if [ $recompile -eq 1 ];then
 	cd - 1>/dev/null
 fi
 
-#golang1.20.13
+#golang1.23.12
 if [ -e "/usr/bin/go" ];then
 	goversion=`go version |awk -F " " '{print $3}'`
 else
 	goversion="0"
 fi
-if [ "$goversion" != "go1.20.13" ];then
+if [ "$goversion" != "go1.23.12" ];then
 	echo  -e "\n\n\n ******************installing go ****************************"
 	sudo apt install wget -y
-	wget https://go.dev/dl/go1.20.13.linux-arm64.tar.gz -O ~/go1.20.13.linux-arm64.tar.gz
-	cd ~ && tar -xf ~/go1.20.13.linux-arm64.tar.gz &&  sudo cp -a go/bin/* /usr/bin/
-	sudo cp -a go /usr/local
+	wget https://go.dev/dl/go1.23.12.linux-arm64.tar.gz -O ~/go1.23.12.linux-arm64.tar.gz
+	cd ~ && tar -xf ~/go1.23.12.linux-arm64.tar.gz &&  sudo cp -a go/bin/* /usr/bin/
+	sudo rm -rf /usr/local/go &&& cp -a go /usr/local
 	sudo sed -i "/GOPATH/d" ~/.bashrc
 	mkdir ~/gopath -p 
 	export GOPATH=~/gopath 
