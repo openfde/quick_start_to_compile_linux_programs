@@ -104,7 +104,7 @@ if [  ! -e waydroid_waydroid ];then
 	recompile=1
 else
 	cd waydroid_waydroid
-	result=`isUpdated fde_w_14` 
+	result=`isUpdated fde_14` 
 	echo -e "************************ waydroid is $result ************************"
 	if [ "$result" == "Need updated" ];then
 		recompile=1
@@ -169,7 +169,7 @@ if [ "$goversion" != "go1.23.12" ];then
 	sudo apt install wget -y
 	wget https://go.dev/dl/go1.23.12.linux-arm64.tar.gz -O ~/go1.23.12.linux-arm64.tar.gz
 	cd ~ && tar -xf ~/go1.23.12.linux-arm64.tar.gz &&  sudo cp -a go/bin/* /usr/bin/
-	sudo rm -rf /usr/local/go &&& cp -a go /usr/local
+	sudo rm -rf /usr/local/go && cp -a go /usr/local
 	sudo sed -i "/GOPATH/d" ~/.bashrc
 	mkdir ~/gopath -p 
 	export GOPATH=~/gopath 
