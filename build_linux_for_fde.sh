@@ -47,54 +47,6 @@ if [  ! -e /etc/lsb-release ];then
 else
 	source /etc/lsb-release
 fi
-#weston
-if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$DISTRIB_ID" == "uos" ] || [ "$DISTRIB_ID" == "Deepin" ];then
-	echo -e "\n\n\n ******************Installing weston*************************"
-	if [  ! -e weston ];then
-		sudo apt install libpixman-1-dev libinput-dev libdrm-dev wayland-protocols libcairo2-dev libpango1.0-dev libjpeg-dev libwebp-dev libsystemd-dev libpam0g-dev libgbm-dev libva-dev freerdp2-dev libx11-xcb-dev libxcb-xkb-dev libxcb-composite0-dev liblcms2-dev libcolord-dev libgstreamer-plugins-base1.0-dev libxml2-dev libxkbcommon-dev libdbus-1-dev libxcursor-dev meson cmake -y
-		git clone https://gitee.com/openfde/weston
-		recompile=1
-		cd weston
-		if  [ "$DISTRIB_ID" == "Kylin" ] || [ "$DISTRIB_ID" == "uos" ];then 
-			pipe_dev=libpipewire-0.2-dev
-			set +e
-			sudo apt search ${pipe_dev} 2>/dev/null |grep ${pipe_dev}
-			if [ $? != 0 ];then
-				pipe_dev=libpipewire-0.3-dev
-			fi
-			set -e
-			sudo apt install -y ${pipe_dev}
-			git checkout fde_8.0.0
-		elif [ "$DISTRIB_ID" == "Deepin" ];then
-			sudo apt install -y libseat-dev libpipewire-0.3-dev libxcb-cursor-dev libneatvnc-dev
-			git checkout fde_12.0.1
-		fi
-		cd - 1>/dev/null
-	else
-		cd weston
-		if  [ "$DISTRIB_ID" == "Kylin" ] || [ "$DISTRIB_ID" == "uos" ];then 
-			result=`isUpdated fde_8.0.0` 
-		elif [ "$DISTRIB_ID" == "Deepin" ];then
-			result=`isUpdated fde_12.0.1` 
-		fi
-		echo -e "************************ weston is $result ************************"
-		if [ "$result" == "Need updated" ];then
-			recompile=1
-			git pull 
-		fi
-		cd - 1>/dev/null 
-	fi
-	if [ $recompile -eq 1 ];then
-		recompile=0
-		cd weston
-		mkdir -p build
-		meson build
-		meson configure build --prefix=/usr/local
-		sudo ninja -C build install
-		cd - 1>/dev/null 
-	fi
-fi
-
 #gibinder-python
 
 #libgbinder
@@ -167,35 +119,6 @@ if [ $recompile -eq 1 ];then
 	cd - 1>/dev/null
 fi
 
-#if [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];then
-#	echo  -e "\n\n\n ******************Installing mesa ****************************"
-#	if [ ! -e mesa ];then
-#		git clone https://gitee.com/openfde/mesa.git 
-#		cd mesa
-#		recompile=1
-#		git checkout origin/20.1.0_fde_w_for_kylinv10 -b 20.1.0_fde_w_for_kylinv10
-#		sudo apt install bison flex  libwayland-egl-backend-dev  libxcb-glx0  libxcb-glx0-dev libxcb-dri2-0-dev libxcb-dri3-dev  libxcb-present-dev  libxshmfence-dev libxxf86vm-dev libxcb-shm0-dev libx11-xcb-dev -y
-#		cd - 1>/dev/null
-#	else
-#		cd mesa
-#		result=`isUpdated 20.1.0_fde_w_for_kylinv10` 
-#		echo -e "************************ mesa is $result ************************"
-#		if [ "$result" == "Need updated" ];then
-#			recompile=1
-#			git pull 
-#		fi
-#		cd - 1>/dev/null
-#	fi
-#	if [ $recompile -eq 1 ];then
-#		recompile=0
-#		cd mesa
-#		mkdir -p build
-#		meson build . 
-#		meson configure build -Dprefix=/usr
-#		sudo ninja -C build install
-#		cd - 1>/dev/null
-#	fi
-#fi
 #fde_renderer the daemon of emugl on host linux
 echo -e "\n\n\n************************ Installing fde_emugl ************************"
 if [ ! -e "fde_emugl" ];then
@@ -277,61 +200,6 @@ if [ $recompile -eq 1 ];then
 	sudo make install
 	cd - 1>/dev/null 
 fi
-
-#echo  -e "\n\n\n ******************Building fde_tigervncserver****************************"
-#tiger_vncserver
-#if [ ! -e fde_tigervncserver ];then
-#	git clone https://gitee.com/openfde/fde_tigervncserver.git 
-#	cd fde_tigervncserver
-#	recompile=1
-#	sudo dpkg -i xorg-server-source_2%3a1.20.13-1ubuntu1~20.04.8_all.deb
-#	sudo apt install cdbs cmake pristine-tar libjpeg-dev libgnutls28-dev libpam0g-dev libxft-dev libxcursor-dev libxrandr-dev libxdamage-dev libwrap0-dev libfltk1.3-dev xserver-xorg-dev debhelper po-debconf quilt bison flex xutils-dev x11proto-dev xtrans-dev libxau-dev libxdmcp-dev libxfont-dev libxkbfile-dev libpixman-1-dev libpciaccess-dev libgcrypt-dev nettle-dev libudev-dev libaudit-dev libdrm-dev libgl1-mesa-dev libunwind-dev libxmuu-dev libxext-dev libx11-dev libxrender-dev libxi-dev libdmx-dev libxpm-dev libxaw7-dev libxt-dev libxmu-dev libxtst-dev libxres-dev libxfixes-dev libxv-dev libxinerama-dev libxshmfence-dev libepoxy-dev libegl1-mesa-dev libgbm-dev libbsd-dev libdbus-1-dev libsystemd-dev -y
-#	sudo dpkg -i tigervnc-build-deps_1.10.1+dfsg-3_arm64.deb
-#	sudo apt install equivs devscripts --no-install-recommends -y
-#	sudo mk-build-deps -i -t "apt-get" -r
-#	cd -
-#else
-#	cd fde_tigervncserver
-#	result=`isUpdated fde_w` 
-#	echo -e "************************ fde_tigervncserver is $result ************************"
-#	if [ "$result" == "Need updated" ];then
-#		recompile=1
-#		git pull 
-#	fi
-#	cd - 1>/dev/null
-#fi
-#if [ $recompile -eq 1 ];then
-#	recompile=0
-#	cd fde_tigervncserver
-#	sudo DEB_BUILD_OPTIONS="parallel=8" dpkg-buildpackage -b -uc -us
-#	cd - 1>/dev/null && sudo apt install libfile-readbackwards-perl
-#	sudo dpkg  -i  tigervnc-standalone-server_1.10.1+dfsg-3_arm64.deb
-#fi
-
-#fdeime
-#echo  -e "\n\n\n ******************Building fdeime****************************"
-#if [ ! -e fdeime ];then
-#	recompile=1
-#	git clone https://gitee.com/openfde/fdeime.git
-#	sudo apt install libibus-1.0-dev -y
-#else
-#	cd fdeime
-#	result=`isUpdated master` 
-#	echo -e "************************ fdeime is $result ************************"
-#	if [ "$result" == "Need updated" ];then
-#		recompile=1
-#		git pull 
-#	fi
-#	cd - 1>/dev/null
-#fi
-#if [ $recompile -eq 1 ];then
-#	recompile=0
-#	cd fdeime
-#	mkdir build -p
-#	cmake -B build
-#	sudo make -C build install
-#	cd - 1>/dev/null
-#fi
 
 
 #mutter
