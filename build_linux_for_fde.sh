@@ -2,6 +2,9 @@
 
 set -e
 
+if [ -z $REPO_HOST_NAME ];then
+	REPO_HOST_NAME=gitee.com
+fi
 function isUpdated() {
 	LOCAL=$(git log $1 -n 1 --pretty=format:"%H")
 	git fetch
@@ -19,7 +22,7 @@ echo -e "************************ Installing libglibuitl ***********************
 recompile=0
 if [  ! -e libglibutil ];then
 	sudo apt install git make gcc python3 pkg-config libglib2.0-dev  -y
-	git clone https://gitee.com/openfde/libglibutil.git
+	git clone https://$REPO_HOST_NAME.com/openfde/libglibutil.git
 	recompile=1
 else
 	cd libglibutil 
@@ -52,7 +55,7 @@ fi
 #libgbinder
 echo -e "\n\n\n ******************Installing libgbinder****************************"
 if [  ! -e libgbinder ];then
-	git clone https://gitee.com/openfde/libgbinder.git
+	git clone https://$REPO_HOST_NAME/openfde/libgbinder.git
 	recompile=1
 else
 	cd libgbinder
@@ -76,7 +79,7 @@ fi
 echo -e "\n\n\n ******************Installing gbinder-python****************************"
 if [  ! -e gbinder-python ];then
 	sudo apt install python3-pip cython3 lxc curl ca-certificates -y
-	git clone https://gitee.com/openfde/gbinder-python.git
+	git clone https://$REPO_HOST_NAME.com/openfde/gbinder-python.git
 	recompile=1
 else
 	cd gbinder-python
@@ -100,7 +103,8 @@ fi
 #waydroid
 echo  -e "\n\n\n ******************Installing waydroid ****************************"
 if [  ! -e waydroid_waydroid ];then
-	git clone https://gitee.com/openfde/waydroid_waydroid.git
+	mkdir -p /etc/udev/rules.d
+	git clone https://$REPO_HOST_NAME.com/openfde/waydroid_waydroid.git
 	recompile=1
 else
 	cd waydroid_waydroid
@@ -122,7 +126,7 @@ fi
 #fde_renderer the daemon of emugl on host linux
 echo -e "\n\n\n************************ Installing fde_emugl ************************"
 if [ ! -e "fde_emugl" ];then
-	git clone https://gitee.com/openfde/fde_emugl
+	git clone https://$REPO_HOST_NAME.com/openfde/fde_emugl
 	sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpciaccess-dev libxcb-dri3-dev libdrm-dev
 	cd fde_emugl 
 	recompile=1
@@ -172,8 +176,11 @@ if [ "$goversion" != "go1.23.12" ];then
 	sudo rm -rf /usr/local/go && cp -a go /usr/local
 	sudo sed -i "/GOPATH/d" ~/.bashrc
 	mkdir ~/gopath -p 
+	mkdir ~/goroot -p 
 	export GOPATH=~/gopath 
 	echo "export GOPATH=~/gopath" >> ~/.bashrc
+	export GOROOT=~/go
+	echo "export GOROOT=~/goroot" >> ~/.bashrc
 	cd - && go env -w GOPROXY=https://goproxy.cn,direct
 fi
 
@@ -181,7 +188,7 @@ fi
 echo -e "\n\n\n ******************Building fde_fs****************************"
 if [ ! -e fde_fs ];then
 	sudo apt install  libfuse-dev fuse3 -y
-	git clone https://gitee.com/openfde/fde_fs.git
+	git clone https://$REPO_HOST_NAME.com/openfde/fde_fs.git
 	recompile=1
 else
 	cd fde_fs
@@ -207,7 +214,7 @@ fi
 if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then 
 	echo -e "\n\n\n ******************building mutter****************************"
 	if [ ! -e mutter ];then
-		git clone https://gitee.com/openfde/mutter.git
+		git clone https://$REPO_HOST_NAME.com/openfde/mutter.git
 		recompile=1
 		sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon libxkbfile-dev intltool libgbm-dev
 		cd mutter
@@ -286,7 +293,8 @@ fi
 #fde_ctrl
 echo -e "\n\n\n ******************Building fde_ctrl****************************"
 if [  ! -e fde_ctrl ];then
-	git clone https://gitee.com/openfde/fde_ctrl.git
+	mkdir -p /lib/systemd/system-sleep/openfde
+	git clone https://$REPO_HOST_NAME.com/openfde/fde_ctrl.git
 	if [ "$DISTRIB_ID" != "Deepin" ];then
 		sudo apt install -y mutter
 	fi
@@ -316,7 +324,7 @@ fi
 if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$DISTRIB_ID" == "uos" ];then
 	echo -e "\n\n\n ******************Building fde_navi****************************"
 	if [  ! -e fde_navi ];then
-		git clone https://gitee.com/openfde/fde_navi.git
+		git clone https://$REPO_HOST_NAME.com/openfde/fde_navi.git
 		sudo apt install -y qt5-qmake wmctrl qt5-default qtbase5-dev g++
 		recompile=1
 	else
