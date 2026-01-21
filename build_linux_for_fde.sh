@@ -298,7 +298,11 @@ fi
 #fde_ctrl
 echo -e "\n\n\n ******************Building fde_ctrl****************************"
 if [  ! -e fde_ctrl ];then
-	mkdir -p /lib/systemd/system-sleep/openfde
+	if  [ "$DISTRIB_ID" == "Kylin" ] ;then
+		sudo mkdir -p /lib/systemd/system-sleep/openfde
+		sudo mkdir -p /usr/share/lightdm/lightdm.conf.d 
+		sudo mkdir /usr/share/ukui-greeter/images/badges 
+	fi
 	git clone $preurl/fde_ctrl.git
 	if [ "$DISTRIB_ID" != "Deepin" ];then
 		sudo apt install -y mutter
