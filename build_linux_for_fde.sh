@@ -21,7 +21,8 @@ function isUpdated() {
 
 echo -e "************************ Installing prebuilt_gbinders ************************"
 recompile=0
-if [  ! -e prebuilts_gbinders ];then
+if [  ! -e prebuilt_gbinders ];then
+	sudo apt install make -y
 	git clone $preurl/prebuilt_gbinders
 	recompile=1
 else
@@ -53,6 +54,7 @@ fi
 #waydroid
 echo  -e "\n\n\n ******************Installing waydroid ****************************"
 if [  ! -e waydroid_waydroid ];then
+	sudo apt install python3-pip -y
 	mkdir -p /etc/udev/rules.d
 	git clone $preurl/waydroid_waydroid.git
 	recompile=1
@@ -77,7 +79,7 @@ fi
 echo -e "\n\n\n************************ Installing fde_emugl ************************"
 if [ ! -e "fde_emugl" ];then
 	git clone $preurl/fde_emugl
-	sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpciaccess-dev libxcb-dri3-dev libdrm-dev
+	sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpciaccess-dev libxcb-dri3-dev libdrm-dev uuid-dev
 	cd fde_emugl 
 	recompile=1
 	if [ "$DISTRIB_ID" = "Ubuntu" -a "$DISTRIB_CODENAME" = "noble" ] ;then
@@ -166,7 +168,7 @@ if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then
 	if [ ! -e mutter ];then
 		git clone $preurl/mutter.git
 		recompile=1
-		sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon libxkbfile-dev intltool libgbm-dev xcvt
+		sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon libxkbfile-dev intltool libgbm-dev 
 		cd mutter
 		if [ "$DISTRIB_ID" = "Kylin" ] ;then
 			git checkout 3.36.1_w
@@ -182,7 +184,7 @@ if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then
 				sudo apt install -y libgbm-dev xcvt
 				git checkout 42.9_ubuntu
 			elif [ "$DISTRIB_CODENAME" = "noble" ];then
-				sudo apt install -y libeis-dev libei-dev libcolord-gtk4-dev libgnome-desktop-4-dev gobject-introspection python3-dbusmock
+				sudo apt install -y libeis-dev libei-dev libcolord-gtk4-dev libgnome-desktop-4-dev gobject-introspection python3-dbusmock xcvt
 				git checkout 46.2_ubuntu
 			fi
 		fi
