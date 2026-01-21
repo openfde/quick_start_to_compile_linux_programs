@@ -301,7 +301,7 @@ if [  ! -e fde_ctrl ];then
 	if  [ "$DISTRIB_ID" == "Kylin" ] ;then
 		sudo mkdir -p /lib/systemd/system-sleep/openfde
 		sudo mkdir -p /usr/share/lightdm/lightdm.conf.d 
-		sudo mkdir /usr/share/ukui-greeter/images/badges 
+		sudo mkdir -p /usr/share/ukui-greeter/images/badges 
 	fi
 	git clone $preurl/fde_ctrl.git
 	if [ "$DISTRIB_ID" != "Deepin" ];then
