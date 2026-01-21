@@ -19,27 +19,78 @@ function isUpdated() {
 	fi
 }
 
-echo -e "************************ Installing prebuilt_gbinders ************************"
+#libglibutil
+echo -e "************************ Installing libglibuitl ************************"
 recompile=0
-if [  ! -e prebuilt_gbinders ];then
-	sudo apt install make -y
-	git clone $preurl/prebuilt_gbinders
+if [  ! -e libglibutil ];then
+	sudo apt install git make gcc python3 pkg-config libglib2.0-dev  -y
+	git clone https://$REPO_HOST_NAME/openfde/libglibutil.git
 	recompile=1
 else
-	cd prebuilt_gbinders
-	result=`isUpdated master` 
-	echo -e "************************ prebuilt_gbinders is $result ************************"
+	cd libglibutil
+	result=`isUpdated master`
+	echo -e "************************ libglibutil is $result ************************"
 	if [ "$result" == "Need updated" ];then
 		recompile=1
-		git pull 
+		git pull
 	fi
-	cd - 1>/dev/null 
+	cd - 1>/dev/null
 fi
 if [ $recompile -eq 1 ];then
 	recompile=0
-	cd prebuilt_gbinders
+	cd libglibutil
+	make
+	sudo make install-dev
 	sudo make install
-	cd - 1>/dev/null 
+	cd - 1>/dev/null
+fi
+
+#libgbinder
+echo -e "\n\n\n ******************Installing libgbinder****************************"
+if [  ! -e libgbinder ];then
+	git clone https://$REPO_HOST_NAME/openfde/libgbinder.git
+	recompile=1
+else
+	cd libgbinder
+	result=`isUpdated master`
+	echo -e "************************ libgbinder is $result ************************"
+	if [ "$result" == "Need updated" ];then
+		recompile=1
+		git pull
+	fi
+	cd - 1>/dev/null
+fi
+if [ $recompile -eq 1 ];then
+       recompile=0
+       cd libgbinder
+       make
+       sudo make install-dev
+       cd - 1>/dev/null
+fi
+
+#gbinder-python
+echo -e "\n\n\n ******************Installing gbinder-python****************************"
+if [  ! -e gbinder-python ];then
+       sudo apt install python3-pip cython3 lxc curl ca-certificates -y
+       git clone https://$REPO_HOST_NAME/openfde/gbinder-python.git
+       recompile=1
+else
+       cd gbinder-python
+       result=`isUpdated master`
+       echo -e "************************ gbinder-python is $result ************************"
+       if [ "$result" == "Need updated" ];then
+               recompile=1
+               git pull
+       fi
+       cd - 1>/dev/null
+fi
+if [ $recompile -eq 1 ];then
+       recompile=0
+       cd gbinder-python
+       sudo python3 setup.py build_ext --inplace --cython
+       sudo python3 setup.py install
+       sudo python3 setup.py sdist --cython
+       cd - 1>/dev/null
 fi
 
 if [  ! -e /etc/lsb-release ];then
