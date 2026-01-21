@@ -129,11 +129,10 @@ if [ "$goversion" != "go1.23.12" ];then
 	sudo rm -rf /usr/local/go && cp -a go /usr/local
 	sudo sed -i "/GOPATH/d" ~/.bashrc
 	mkdir ~/gopath -p 
-	mkdir ~/goroot -p 
 	export GOPATH=~/gopath 
 	echo "export GOPATH=~/gopath" >> ~/.bashrc
 	export GOROOT=~/go
-	echo "export GOROOT=~/goroot" >> ~/.bashrc
+	echo "export GOROOT=~/go" >> ~/.bashrc
 	cd - && go env -w GOPROXY=https://goproxy.cn,direct
 fi
 
