@@ -5,6 +5,11 @@ set -e
 if [ -z $REPO_HOST_NAME ];then
 	REPO_HOST_NAME=gitee.com
 fi
+myname=`whoami`
+if [ "$myname" = "root" ];then
+	apt install sudo -y
+fi
+
 preurl=https://$REPO_HOST_NAME/openfde
 
 function isUpdated() {
