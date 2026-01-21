@@ -115,6 +115,7 @@ if [ $recompile -eq 1 ];then
 fi
 
 #golang1.23.12
+source ~/.bashrc
 if [ -e "/usr/bin/go" ];then
 	goversion=`go version |awk -F " " '{print $3}'`
 else
