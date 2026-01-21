@@ -5,6 +5,8 @@ set -e
 if [ -z $REPO_HOST_NAME ];then
 	REPO_HOST_NAME=gitee.com
 fi
+preurl=https://$REPO_HOST_NAME.com/openfde
+
 function isUpdated() {
 	LOCAL=$(git log $1 -n 1 --pretty=format:"%H")
 	git fetch
@@ -17,17 +19,15 @@ function isUpdated() {
 	fi
 }
 
-echo -e "************************ Installing libglibuitl ************************"
-#libglibutil
+echo -e "************************ Installing prebuilt_gbinders ************************"
 recompile=0
-if [  ! -e libglibutil ];then
-	sudo apt install git make gcc python3 pkg-config libglib2.0-dev  -y
-	git clone https://$REPO_HOST_NAME.com/openfde/libglibutil.git
+if [  ! -e prebuilts_gbinders ];then
+	git clone $preurl/prebuilt_gbinders
 	recompile=1
 else
-	cd libglibutil 
+	cd prebuilt_gbinders
 	result=`isUpdated master` 
-	echo -e "************************ libglibutil is $result ************************"
+	echo -e "************************ prebuilt_gbinders is $result ************************"
 	if [ "$result" == "Need updated" ];then
 		recompile=1
 		git pull 
@@ -36,9 +36,8 @@ else
 fi
 if [ $recompile -eq 1 ];then
 	recompile=0
-	cd libglibutil
-	make
-	sudo make install-dev
+	cd prebuilts_gbinders
+	sudo make install
 	cd - 1>/dev/null 
 fi
 
@@ -50,61 +49,12 @@ if [  ! -e /etc/lsb-release ];then
 else
 	source /etc/lsb-release
 fi
-#gibinder-python
-
-#libgbinder
-echo -e "\n\n\n ******************Installing libgbinder****************************"
-if [  ! -e libgbinder ];then
-	git clone https://$REPO_HOST_NAME/openfde/libgbinder.git
-	recompile=1
-else
-	cd libgbinder
-	result=`isUpdated master` 
-	echo -e "************************ libgbinder is $result ************************"
-	if [ "$result" == "Need updated" ];then
-		recompile=1
-		git pull 
-	fi
-	cd - 1>/dev/null 
-fi
-if [ $recompile -eq 1 ];then
-	recompile=0
-	cd libgbinder
-	make
-	sudo make install-dev
-	cd - 1>/dev/null 
-fi
-
-#gibinder-python
-echo -e "\n\n\n ******************Installing gbinder-python****************************"
-if [  ! -e gbinder-python ];then
-	sudo apt install python3-pip cython3 lxc curl ca-certificates -y
-	git clone https://$REPO_HOST_NAME.com/openfde/gbinder-python.git
-	recompile=1
-else
-	cd gbinder-python
-	result=`isUpdated master` 
-	echo -e "************************ gbinder-python is $result ************************"
-	if [ "$result" == "Need updated" ];then
-		recompile=1
-		git pull 
-	fi
-	cd - 1>/dev/null 
-fi
-if [ $recompile -eq 1 ];then
-	recompile=0
-	cd gbinder-python
-	sudo python3 setup.py build_ext --inplace --cython
-	sudo python3 setup.py install
-	sudo python3 setup.py sdist --cython
-	cd - 1>/dev/null
-fi
 
 #waydroid
 echo  -e "\n\n\n ******************Installing waydroid ****************************"
 if [  ! -e waydroid_waydroid ];then
 	mkdir -p /etc/udev/rules.d
-	git clone https://$REPO_HOST_NAME.com/openfde/waydroid_waydroid.git
+	git clone $preurl/waydroid_waydroid.git
 	recompile=1
 else
 	cd waydroid_waydroid
@@ -126,7 +76,7 @@ fi
 #fde_renderer the daemon of emugl on host linux
 echo -e "\n\n\n************************ Installing fde_emugl ************************"
 if [ ! -e "fde_emugl" ];then
-	git clone https://$REPO_HOST_NAME.com/openfde/fde_emugl
+	git clone $preurl/fde_emugl
 	sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpciaccess-dev libxcb-dri3-dev libdrm-dev
 	cd fde_emugl 
 	recompile=1
@@ -188,7 +138,7 @@ fi
 echo -e "\n\n\n ******************Building fde_fs****************************"
 if [ ! -e fde_fs ];then
 	sudo apt install  libfuse-dev fuse3 -y
-	git clone https://$REPO_HOST_NAME.com/openfde/fde_fs.git
+	git clone $preurl/fde_fs.git
 	recompile=1
 else
 	cd fde_fs
@@ -214,9 +164,9 @@ fi
 if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then 
 	echo -e "\n\n\n ******************building mutter****************************"
 	if [ ! -e mutter ];then
-		git clone https://$REPO_HOST_NAME.com/openfde/mutter.git
+		git clone $preurl/mutter.git
 		recompile=1
-		sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon libxkbfile-dev intltool libgbm-dev
+		sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon libxkbfile-dev intltool libgbm-dev xcvt
 		cd mutter
 		if [ "$DISTRIB_ID" = "Kylin" ] ;then
 			git checkout 3.36.1_w
@@ -294,7 +244,7 @@ fi
 echo -e "\n\n\n ******************Building fde_ctrl****************************"
 if [  ! -e fde_ctrl ];then
 	mkdir -p /lib/systemd/system-sleep/openfde
-	git clone https://$REPO_HOST_NAME.com/openfde/fde_ctrl.git
+	git clone $preurl/fde_ctrl.git
 	if [ "$DISTRIB_ID" != "Deepin" ];then
 		sudo apt install -y mutter
 	fi
@@ -324,7 +274,7 @@ fi
 if { [ "$DISTRIB_ID" == "Kylin" ] && [ "$DISTRIB_RELEASE" == "V10" ];  } || [ "$DISTRIB_ID" == "uos" ];then
 	echo -e "\n\n\n ******************Building fde_navi****************************"
 	if [  ! -e fde_navi ];then
-		git clone https://$REPO_HOST_NAME.com/openfde/fde_navi.git
+		git clone $preurl/fde_navi.git
 		sudo apt install -y qt5-qmake wmctrl qt5-default qtbase5-dev g++
 		recompile=1
 	else
