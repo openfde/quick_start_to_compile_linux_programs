@@ -5,7 +5,7 @@ set -e
 if [ -z $REPO_HOST_NAME ];then
 	REPO_HOST_NAME=gitee.com
 fi
-preurl=https://$REPO_HOST_NAME.com/openfde
+preurl=https://$REPO_HOST_NAME/openfde
 
 function isUpdated() {
 	LOCAL=$(git log $1 -n 1 --pretty=format:"%H")
