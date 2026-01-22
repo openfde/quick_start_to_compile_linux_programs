@@ -171,7 +171,9 @@ if [ $recompile -eq 1 ];then
 fi
 
 #golang1.23.12
-source ~/.bashrc
+mkdir ~/gopath -p 
+export GOPATH=~/gopath 
+export GOROOT=~/go
 if [ -e "/usr/bin/go" ];then
 	goversion=`go version |awk -F " " '{print $3}'`
 else
@@ -183,13 +185,10 @@ if [ "$goversion" != "go1.23.12" ];then
 	wget https://go.dev/dl/go1.23.12.linux-arm64.tar.gz -O ~/go1.23.12.linux-arm64.tar.gz
 	cd ~ && tar -xf ~/go1.23.12.linux-arm64.tar.gz &&  sudo cp -a go/bin/* /usr/bin/
 	sudo rm -rf /usr/local/go && cp -a go /usr/local
-	mkdir ~/gopath -p 
 	sudo sed -i "/GOPATH/d" ~/.bashrc
 	sudo sed -i "/GOROOT/d" ~/.bashrc
-	export GOPATH=~/gopath 
-	export GOROOT=~/go
-	echo "export GOPATH=~/gopath" >> ~/.bashrc
-	echo "export GOROOT=~/go" >> ~/.bashrc
+	echo "export GOPATH=~/gopath" |sudo tee -a  ~/.bashrc
+	echo "export GOROOT=~/go" | sudo tee -a  ~/.bashrc
 	cd - && go env -w GOPROXY=https://goproxy.cn,direct
 fi
 
