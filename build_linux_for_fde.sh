@@ -182,7 +182,7 @@ fi
 if [ "$goversion" != "go1.23.12" ];then
 	echo  -e "\n\n\n ******************installing go ****************************"
 	sudo apt install wget -y
-	wget https://go.dev/dl/go1.23.12.linux-arm64.tar.gz -O ~/go1.23.12.linux-arm64.tar.gz
+	wget https://mirrors.aliyun.com/golang/go1.23.12.linux-arm64.tar.gz -O ~/go1.23.12.linux-arm64.tar.gz
 	cd ~ && tar -xf ~/go1.23.12.linux-arm64.tar.gz &&  sudo cp -a go/bin/* /usr/bin/
 	sudo rm -rf /usr/local/go && cp -a go /usr/local
 	sudo sed -i "/GOPATH/d" ~/.bashrc
@@ -238,7 +238,7 @@ if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then
 		elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
 			sudo apt install -y liblcms2-dev libcolord-dev libpipewire-0.3-dev xvfb xcvt
 			if [ "$DISTRIB_CODENAME" = "jammy" ];then
-				sudo apt install -y libgbm-dev 
+				sudo apt install -y libgbm-dev  desktop-file-utils
 				git checkout 42.9_ubuntu
 			elif [ "$DISTRIB_CODENAME" = "noble" ];then
 				sudo apt install -y libeis-dev libei-dev libcolord-gtk4-dev libgnome-desktop-4-dev gobject-introspection python3-dbusmock 
