@@ -292,7 +292,8 @@ if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then
 			sudo make install
 		else
 			mkdir -p build
-			meson build . && ninja -C build -j4
+			meson setup build -Dprofiler=false
+			ninja -C build -j4
 			sudo ninja -C build install && sudo ldconfig
 		fi
 		cd - 1>/dev/null 
