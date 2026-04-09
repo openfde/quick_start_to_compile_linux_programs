@@ -288,12 +288,12 @@ if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then
 		recompile=0
 		if  [ "$DISTRIB_ID" = "uos" ] ;then
 			./autogen.sh
-			make -j4
+			make -j $(nproc)
 			sudo make install
 		else
 			mkdir -p build
 			meson setup build -Dprofiler=false
-			ninja -C build -j4
+			ninja -C build -j $(nproc)
 			sudo ninja -C build install && sudo ldconfig
 		fi
 		cd - 1>/dev/null 
