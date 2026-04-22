@@ -9,6 +9,9 @@ myname=`whoami`
 if [ "$myname" = "root" ];then
 	apt install sudo -y
 fi
+if [ -n  "$1" ];then
+	tag=$1
+fi
 
 preurl=https://$REPO_HOST_NAME/openfde
 
@@ -127,7 +130,9 @@ fi
 if [ $recompile -eq 1 ];then
 	recompile=0
 	cd waydroid_waydroid
-	git checkout 64dfd344e8329d619c2342129fb7f8a9f81c074d 
+	if [ -n "$tag" ];then
+		git checkout $tag
+	fi
 	sudo make install
 	cd - 1>/dev/null
 fi
