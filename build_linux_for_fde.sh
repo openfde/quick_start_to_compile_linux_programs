@@ -127,6 +127,7 @@ fi
 if [ $recompile -eq 1 ];then
 	recompile=0
 	cd waydroid_waydroid
+	git checkout 64dfd344e8329d619c2342129fb7f8a9f81c074d 
 	sudo make install
 	cd - 1>/dev/null
 fi
