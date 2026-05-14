@@ -131,7 +131,12 @@ if [ $recompile -eq 1 ];then
 	recompile=0
 	cd waydroid_waydroid
 	if [ -n "$tag" ];then
-		git checkout $tag
+		set +e
+		git tag --list |grep $tag 
+		if [ $? = 0 ];then
+			git checkout $tag
+		fi
+		set -e
 	fi
 	sudo make install
 	cd - 1>/dev/null
