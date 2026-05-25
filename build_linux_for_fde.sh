@@ -200,9 +200,9 @@ if [ "$goversion" != "go1.23.12" ];then
 	sudo sed -i "/GOROOT/d" ~/.bashrc
 	echo "export GOPATH=~/gopath" |sudo tee -a  ~/.bashrc
 	echo "export GOROOT=~/go" | sudo tee -a  ~/.bashrc
-	cd - && go env -w GOPROXY=https://goproxy.cn,direct
+	cd -
 fi
-
+go env -w GOPROXY=https://goproxy.cn,direct
 #fde_fs
 echo -e "\n\n\n ******************Building fde_fs****************************"
 if [ ! -e fde_fs ];then
