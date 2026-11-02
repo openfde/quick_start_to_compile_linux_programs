@@ -230,44 +230,46 @@ fi
 
 #mutter
 #uos and deepin doesn't support mutter
-if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then 
+if  [ "$DISTRIB_ID" = "Ubuntu" ] ;then 
 	echo -e "\n\n\n ******************building mutter****************************"
 	if [ ! -e mutter ];then
 		git clone $preurl/mutter.git
 		recompile=1
 		sudo apt install -y meson libgraphene-1.0-dev libgtk-3-dev gsettings-desktop-schemas-dev gnome-settings-daemon-dev libjson-glib-dev libgnome-desktop-3-dev libxkbcommon-x11-dev libx11-xcb-dev libxcb-randr0-dev libxcb-res0-dev libcanberra-dev libgudev-1.0-dev libinput-dev libstartup-notification0-dev sysprof xwayland gnome-settings-daemon libxkbfile-dev intltool libgbm-dev 
 		cd mutter
-		if [ "$DISTRIB_ID" = "Kylin" ] ;then
-			sudo apt install xserver-xorg-core -y
-			git checkout 3.36.1_w
-		elif  [ "$DISTRIB_ID" = "Debian" ] ;then
-			sudo apt install -y libgbm-dev libcolord-dev liblcms2-dev libpipewire-0.3-dev xvfb xcvt
-			git checkout 43.8_debian
+		#if [ "$DISTRIB_ID" = "Kylin" ] ;then
+		#	sudo apt install xserver-xorg-core -y
+		#	git checkout 3.36.1_w
+		#elif  [ "$DISTRIB_ID" = "Debian" ] ;then
+		#	sudo apt install -y libgbm-dev libcolord-dev liblcms2-dev libpipewire-0.3-dev xvfb xcvt
+		#	git checkout 43.8_debian
 		#elif  [ "$DISTRIB_ID" = "uos" ] ;then
 		#	git checkout 3.30.2_uos
 		#	sudo apt install -y libgbm-dev libelogind-dev libgles2-mesa-dev
-		elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
-			sudo apt install -y liblcms2-dev libcolord-dev libpipewire-0.3-dev xvfb xcvt
+		#elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
+		#	sudo apt install -y liblcms2-dev libcolord-dev libpipewire-0.3-dev xvfb xcvt
 			if [ "$DISTRIB_CODENAME" = "jammy" ];then
 				sudo apt install -y libgbm-dev  desktop-file-utils
 				git checkout 42.9_ubuntu
 			elif [ "$DISTRIB_CODENAME" = "noble" ];then
 				sudo apt install -y libeis-dev libei-dev libcolord-gtk4-dev libgnome-desktop-4-dev gobject-introspection python3-dbusmock 
 				git checkout 46.2_ubuntu
+			elif [ "$DISTRIB_CODENAME" = "noble" ];then
+				git checkout 50.1
 			fi
 		fi
 		cd -  1>/dev/null
 	else
 		cd mutter
-		branch=`git branch |grep '*' |awk -F " " '{print $2}' `
-		tarbranch="3.36.1_w"
-		if [ "$DISTRIB_ID" = "Kylin" ] ;then
-			if [ "$branch" != "3.36.1_w" ];then
-				git checkout 3.36.1_w
-			fi
-		elif  [ "$DISTRIB_ID" = "Debian" ] ;then
-			git checkout 43.8_debian
-			tarbranch="43.8_debian"
+		#branch=`git branch |grep '*' |awk -F " " '{print $2}' `
+		#tarbranch="3.36.1_w"
+		#if [ "$DISTRIB_ID" = "Kylin" ] ;then
+		#	if [ "$branch" != "3.36.1_w" ];then
+		#		git checkout 3.36.1_w
+		#	fi
+		#elif  [ "$DISTRIB_ID" = "Debian" ] ;then
+		#	git checkout 43.8_debian
+		#	tarbranch="43.8_debian"
 		#elif  [ "$DISTRIB_ID" = "uos" ] ;then
 		#	if [ "$branch" != "3.30.2_uos" ];then
 		#		git checkout 3.30.2_uos
@@ -284,6 +286,10 @@ if  [ "$DISTRIB_ID" != "uos" ] && [ "$DISTRIB_ID" != "Deepin" ];then
 					git checkout 46.2_ubuntu
 				fi
 				tarbranch="46.2_ubuntu"
+			elif [ "$DISTRIB_CODENAME" = "resolute" ];then
+				if [ "$branch" != "50.1" ];then
+					git checkout 50.1
+				fi
 			fi
 		fi
 		result=`isUpdated "$tarbranch"`
