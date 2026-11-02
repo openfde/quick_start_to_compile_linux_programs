@@ -279,7 +279,7 @@ if  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
 		#		git checkout 3.30.2_uos
 		#	fi
 		#	tarbranch="3.30.2_uos"
-		elif  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
+		if  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
 			if [ "$DISTRIB_CODENAME" = "jammy" ];then
 				if [ "$branch" != "42.9_ubuntu" ];then
 					git checkout 42.9_ubuntu
