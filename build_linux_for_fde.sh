@@ -195,7 +195,7 @@ if [ "$goversion" != "go1.23.12" ];then
 	sudo apt install wget -y
 	wget https://mirrors.aliyun.com/golang/go1.23.12.linux-arm64.tar.gz -O ~/go1.23.12.linux-arm64.tar.gz
 	cd ~ && tar -xf ~/go1.23.12.linux-arm64.tar.gz &&  sudo cp -a go/bin/* /usr/bin/
-	sudo rm -rf /usr/local/go && cp -a go /usr/local
+	sudo rm -rf /usr/local/go && sudo cp -a go /usr/local
 	sudo sed -i "/GOPATH/d" ~/.bashrc
 	sudo sed -i "/GOROOT/d" ~/.bashrc
 	echo "export GOPATH=~/gopath" |sudo tee -a  ~/.bashrc
