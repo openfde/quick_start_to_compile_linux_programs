@@ -143,42 +143,46 @@ if [ $recompile -eq 1 ];then
 fi
 
 #fde_renderer the daemon of emugl on host linux
-echo -e "\n\n\n************************ Installing fde_emugl ************************"
-if [ ! -e "fde_emugl" ];then
-	git clone $preurl/fde_emugl
-	sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpciaccess-dev libxcb-dri3-dev libdrm-dev uuid-dev
-	cd fde_emugl 
-	recompile=1
-	if [ "$DISTRIB_ID" = "Ubuntu" -a "$DISTRIB_CODENAME" = "noble" ] ;then
-		git checkout ubuntu24.04
-	fi
-	cd - 1>/dev/null
+if [ "$DISTRIB_ID" = "Ubuntu" -a "$DISTRIB_CODENAME" = "resolute" ] ;then
+    echo -e "\n\n\n************************ not to Install fde_emugl ************************"
 else
-	cd fde_emugl
-	tarbranch="main"
-	if  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
-		if [ "$DISTRIB_CODENAME" = "noble" ];then
-			if [ "$branch" != "ubuntu24.04" ];then
-				git checkout ubuntu24.04
-				tarbranch="ubuntu24.04"
-			fi
-		fi
-	fi
-	result=`isUpdated $tarbranch`
-	echo -e "************************ fde_emugl is $result ************************"
-	if [ "$result" == "Need updated" ];then
-		recompile=1
-		git pull 
-	fi
-	cd - 1>/dev/null
-fi
-if [ $recompile -eq 1 ];then
-	recompile=0
-	cd fde_emugl
-	cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -G Ninja -B build/
-	cmake --build build/
-	sudo cmake --install build/
-	cd - 1>/dev/null
+    echo -e "\n\n\n************************ Installing fde_emugl ************************"
+    if [ ! -e "fde_emugl" ];then
+        git clone $preurl/fde_emugl
+        sudo apt install -y libboost-dev liblz4-dev cmake ninja-build libgl1-mesa-dev libunwind-dev libpciaccess-dev libxcb-dri3-dev libdrm-dev uuid-dev
+        cd fde_emugl 
+        recompile=1
+        if [ "$DISTRIB_ID" = "Ubuntu" -a "$DISTRIB_CODENAME" = "noble" ] ;then
+            git checkout ubuntu24.04
+        fi
+        cd - 1>/dev/null
+    else
+        cd fde_emugl
+        tarbranch="main"
+        if  [ "$DISTRIB_ID" = "Ubuntu" ] ;then
+            if [ "$DISTRIB_CODENAME" = "noble" ];then
+                if [ "$branch" != "ubuntu24.04" ];then
+                    git checkout ubuntu24.04
+                    tarbranch="ubuntu24.04"
+                fi
+            fi
+        fi
+        result=`isUpdated $tarbranch`
+        echo -e "************************ fde_emugl is $result ************************"
+        if [ "$result" == "Need updated" ];then
+            recompile=1
+            git pull 
+        fi
+        cd - 1>/dev/null
+    fi
+    if [ $recompile -eq 1 ];then
+        recompile=0
+        cd fde_emugl
+        cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -G Ninja -B build/
+        cmake --build build/
+        sudo cmake --install build/
+        cd - 1>/dev/null
+    fi
 fi
 
 #golang1.23.12
