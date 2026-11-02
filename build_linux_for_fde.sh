@@ -10,7 +10,15 @@ if [ "$myname" = "root" ];then
 	apt install sudo -y
 fi
 if [ -n  "$1" ];then
-	tag=$1
+    case "$1" in 
+        ver=*)
+            basever="${1#ver=}"
+            #basever equal like 17 
+            ;;
+        *)
+            tag=$1
+            ;;
+    esac
 fi
 
 preurl=https://$REPO_HOST_NAME/openfde
@@ -113,7 +121,7 @@ fi
 #waydroid
 echo  -e "\n\n\n ******************Installing waydroid ****************************"
 if [  ! -e waydroid_waydroid ];then
-	sudo apt install python3-pip -y
+	sudo apt install python3-pip python3-pyinotify -y
 	mkdir -p /etc/udev/rules.d
 	git clone $preurl/waydroid_waydroid.git
 	recompile=1
@@ -138,6 +146,12 @@ if [ $recompile -eq 1 ];then
 		fi
 		set -e
 	fi
+    if [ -n "$basever" ];then
+        set +e
+        #basever equal like 17 
+        git checkout origin/fde_$basever -b fde_$basever
+        set -e
+    fi
 	sudo make install
 	cd - 1>/dev/null
 fi
